@@ -9,9 +9,9 @@ import Paper from '@material-ui/core/Paper/Paper';
 import FileDrop from 'react-file-drop';
 import { Howl, Howler } from 'howler';
 import Typography from '@material-ui/core/Typography/Typography';
+import Button from '@material-ui/core/Button/Button';
 import { audioOperations } from '../../state/features/audio';
 import Playlist from '../components/playlist';
-import Button from '@material-ui/core/Button/Button';
 
 const styles = theme => ({
   main: {
@@ -31,15 +31,6 @@ const styles = theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
-  },
-  dropOnto: {
-    margin: theme.spacing.unit * 4,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
-    backgroundColor: '#aaa',
-
   },
 });
 

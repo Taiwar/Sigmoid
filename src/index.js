@@ -22,8 +22,6 @@ const reduxStore = configureStore({
 const persistor = persistStore(reduxStore);
 persistor.purge();
 
-const defaultTheme = createMuiTheme();
-
 const theme = createMuiTheme({
   typography: {
     useNextVariants: true,
@@ -35,12 +33,6 @@ const theme = createMuiTheme({
     secondary: {
       main: '#00e5ff'
     }
-  },
-  linkButton: {
-    color: defaultTheme.palette.common.white,
-    marginLeft: defaultTheme.spacing.unit,
-    marginRight: defaultTheme.spacing.unit,
-    fontWeight: 'bold',
   },
 });
 

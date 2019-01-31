@@ -8,9 +8,6 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
 
 const styles = {
-  title: {
-    color: 'black'
-  },
 };
 
 class SongItem extends Component {
@@ -25,7 +22,7 @@ class SongItem extends Component {
   }
 
   render() {
-    const { song, classes } = this.props;
+    const { song } = this.props;
 
     return (
       <ListItem dense button onClick={this.handleClick}>
@@ -33,7 +30,6 @@ class SongItem extends Component {
           <MusicNoteIcon />
         </ListItemIcon>
         <ListItemText
-          className={classes.title}
           primary={song.name}
           secondary={song.path}
         />
