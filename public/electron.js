@@ -6,14 +6,19 @@ const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
 let mainWindow;
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    webPreferences: { webSecurity: false } // TODO: Is this necessary?
+    webPreferences: { webSecurity: isProduction }
   });
-  // mainWindow.loadURL('http://localhost:3000');
-  mainWindow.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
+  if (isProduction) {
+    mainWindow.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
+  } else {
+    mainWindow.loadURL('http://localhost:3000');
+  }
   const menu = Menu.buildFromTemplate([
     {
       label: 'Dev',
