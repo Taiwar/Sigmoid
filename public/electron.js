@@ -6,18 +6,18 @@ const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
 let mainWindow;
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isDev = require('electron-is-dev');
 
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    webPreferences: { webSecurity: isProduction }
+    webPreferences: { webSecurity: !isDev }
   });
-  if (isProduction) {
-    mainWindow.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
-  } else {
+  if (isDev) {
     mainWindow.loadURL('http://localhost:3000');
+  } else {
+    mainWindow.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
   }
   const menu = Menu.buildFromTemplate([
     {
