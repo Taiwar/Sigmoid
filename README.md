@@ -1,7 +1,7 @@
 # Sigmoid
 ![Alt text](/public/icon.png?raw=true)
 
-## Running the server
+## Running Sigmoid
 
 Use `yarn install` to install dependencies.
 
