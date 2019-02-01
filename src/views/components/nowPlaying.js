@@ -7,7 +7,7 @@ import PauseIcon from '@material-ui/icons/Pause';
 import Paper from '@material-ui/core/Paper/Paper';
 import Typography from '@material-ui/core/Typography/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import LinearProgress from '@material-ui/core/LinearProgress/LinearProgress';
+import Slider from '@material-ui/lab/Slider';
 import Grid from '@material-ui/core/Grid/Grid';
 
 const styles = theme => ({
@@ -32,6 +32,8 @@ class NowPlaying extends Component {
       interval: null
     };
     this.handleToggle = this.handleToggle.bind(this);
+    this.handleSeekerChange = this.handleSeekerChange.bind(this);
+    this.handleSeekerEnd = this.handleSeekerEnd.bind(this);
   }
 
   componentDidMount() {
@@ -60,6 +62,19 @@ class NowPlaying extends Component {
     }
   }
 
+  handleSeekerChange(e, val) {
+    if (Math.abs(val - this.state.completed) > 5) {
+      this.props.howl.seek((val / 100) * this.props.howl.duration());
+    }
+    this.setState({
+      completed: val
+    });
+  }
+
+  handleSeekerEnd() {
+    this.props.howl.seek((this.state.completed / 100) * this.props.howl.duration());
+  }
+
   render() {
     const { howl, song, classes } = this.props;
 
@@ -84,7 +99,11 @@ class NowPlaying extends Component {
             </div>
           </Grid>
           <Grid item xs={12}>
-            <LinearProgress variant="determinate" value={this.state.completed} />
+            <Slider
+              value={this.state.completed}
+              onChange={this.handleSeekerChange}
+              onDragEnd={this.handleSeekerEnd}
+            />
           </Grid>
         </Grid>
       </Paper>
