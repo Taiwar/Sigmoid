@@ -41,7 +41,6 @@ class Home extends React.Component {
       currentSong: null
     };
     this.handleOnPlay = this.handleOnPlay.bind(this);
-    this.handleOnToggle = this.handleOnToggle.bind(this);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -73,14 +72,6 @@ class Home extends React.Component {
     });
 
     sound.play();
-  }
-
-  handleOnToggle() {
-    if (this.state.howl.playing()) {
-      this.state.howl.pause();
-    } else {
-      this.state.howl.play();
-    }
   }
 
   render() {
