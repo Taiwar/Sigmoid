@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import Paper from '@material-ui/core/Paper/Paper';
 import FileDrop from 'react-file-drop';
-import { Howl, Howler } from 'howler';
+import { Howl } from 'howler';
 import Typography from '@material-ui/core/Typography/Typography';
 import { audioOperations } from '../../state/features/audio';
 import { NowPlaying, Playlist } from '../components';
@@ -43,11 +43,6 @@ class Home extends React.Component {
     this.handleOnPlay = this.handleOnPlay.bind(this);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  componentDidMount() {
-    Howler.volume(0.2);
-  }
-
   handleOnDrop(files, event) {
     event.preventDefault();
     Object.keys(files).forEach((key) => {
@@ -61,6 +56,7 @@ class Home extends React.Component {
     const sound = new Howl({
       src: [song.path]
     });
+    sound.volume(0.2);
 
     if (this.state.howl != null) {
       this.state.howl.stop();

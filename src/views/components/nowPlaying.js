@@ -55,23 +55,20 @@ class NowPlaying extends Component {
     e.preventDefault();
     if (this.props.howl.playing()) {
       this.props.howl.pause();
-      this.setState({
-        isPlaying: false
-      });
     } else {
       this.props.howl.play();
-      this.setState({
-        isPlaying: true
-      });
     }
   }
 
   render() {
-    const { song, classes } = this.props;
+    const { howl, song, classes } = this.props;
 
     if (song == null) {
       return (<div/>);
     }
+
+    howl.once('play', () => this.setState({ isPlaying: true }));
+    howl.once('pause', () => this.setState({ isPlaying: false }));
 
     return (
       <Paper className={classes.paper}>
@@ -80,9 +77,11 @@ class NowPlaying extends Component {
             <Typography component="h2">{song.name}</Typography>
           </Grid>
           <Grid item xs={12}>
-            <IconButton onClick={this.handleToggle}>
-              {this.state.isPlaying ? <PauseIcon/> : <PlayIcon/>}
-            </IconButton>
+            <div align="center">
+              <IconButton onClick={this.handleToggle}>
+                {this.state.isPlaying ? <PauseIcon/> : <PlayIcon/>}
+              </IconButton>
+            </div>
           </Grid>
           <Grid item xs={12}>
             <LinearProgress variant="determinate" value={this.state.completed} />
