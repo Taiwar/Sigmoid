@@ -24,7 +24,7 @@ persistor.purge();
 
 const theme = createMuiTheme({
   typography: {
-    useNextVariants: true,
+    useNextVariants: true
   },
   palette: {
     primary: {

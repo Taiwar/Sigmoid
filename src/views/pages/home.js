@@ -9,9 +9,8 @@ import Paper from '@material-ui/core/Paper/Paper';
 import FileDrop from 'react-file-drop';
 import { Howl, Howler } from 'howler';
 import Typography from '@material-ui/core/Typography/Typography';
-import Button from '@material-ui/core/Button/Button';
 import { audioOperations } from '../../state/features/audio';
-import Playlist from '../components/playlist';
+import { NowPlaying, Playlist } from '../components';
 
 const styles = theme => ({
   main: {
@@ -20,13 +19,13 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 3,
     marginRight: theme.spacing.unit * 3,
     [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-      width: 600,
+      width: 900,
       marginLeft: 'auto',
       marginRight: 'auto',
     },
   },
   paper: {
-    marginTop: theme.spacing.unit * 8,
+    marginTop: theme.spacing.unit * 4,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -37,9 +36,12 @@ const styles = theme => ({
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { howl: null };
+    this.state = {
+      howl: null,
+      currentSong: null
+    };
     this.handleOnPlay = this.handleOnPlay.bind(this);
-    this.handleOnStop = this.handleOnStop.bind(this);
+    this.handleOnToggle = this.handleOnToggle.bind(this);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -49,7 +51,6 @@ class Home extends React.Component {
 
   handleOnDrop(files, event) {
     event.preventDefault();
-    console.log('Dragged', files);
     Object.keys(files).forEach((key) => {
       if (files[key].type === 'audio/mp3') {
         this.props.onAdd(files[key]);
@@ -67,14 +68,19 @@ class Home extends React.Component {
     }
 
     this.setState({
-      howl: sound
+      howl: sound,
+      currentSong: song
     });
 
     sound.play();
   }
 
-  handleOnStop() {
-    this.state.howl.stop();
+  handleOnToggle() {
+    if (this.state.howl.playing()) {
+      this.state.howl.pause();
+    } else {
+      this.state.howl.play();
+    }
   }
 
   render() {
@@ -82,6 +88,12 @@ class Home extends React.Component {
 
     return (
       <div className={classes.main}>
+        <NowPlaying
+          song={this.state.currentSong}
+          howl={this.state.howl}
+          onNext={() => {}}
+          onPrev={() => {}}
+        />
         <Paper className={classes.paper}>
           <FileDrop onDrop={(files, event) => this.handleOnDrop(files, event)}>
             <Typography component='h2'>Drop some audio files here!</Typography>
@@ -90,7 +102,6 @@ class Home extends React.Component {
               onPlay={this.handleOnPlay}
             />
           </FileDrop>
-          <Button onClick={this.handleOnStop}>Stop</Button>
         </Paper>
       </div>
     );
