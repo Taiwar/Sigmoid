@@ -20,7 +20,7 @@ const reduxStore = configureStore({
 });
 
 const persistor = persistStore(reduxStore);
-persistor.purge();
+// persistor.purge();
 
 const theme = createMuiTheme({
   typography: {
