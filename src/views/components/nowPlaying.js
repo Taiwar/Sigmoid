@@ -12,7 +12,7 @@ import Grid from '@material-ui/core/Grid/Grid';
 
 const styles = theme => ({
   paper: {
-    marginTop: theme.spacing.unit * 8,
+    marginTop: theme.spacing.unit * 4,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -63,6 +63,8 @@ class NowPlaying extends Component {
   }
 
   handleSeekerChange(e, val) {
+    // If steps are larger == Slider has been clicked on, not just slided so change immediately
+    // TODO: See if this can be done more elegantly
     if (Math.abs(val - this.state.completed) > 5) {
       this.props.howl.seek((val / 100) * this.props.howl.duration());
     }

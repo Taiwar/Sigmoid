@@ -25,7 +25,10 @@ const styles = theme => ({
     },
   },
   paper: {
-    marginTop: theme.spacing.unit * 4,
+    maxHeight: 500,
+    overflow: 'auto',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -112,7 +115,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  onAdd: audioOperations.addSong
+  onAdd: audioOperations.addSongToPlaylist
 };
 
 export default compose(

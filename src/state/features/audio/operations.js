@@ -1,7 +1,14 @@
 /* eslint-disable import/prefer-default-export */
-import { addSong, removeSong } from './actions';
+import {
+  addSongToPlaylist, removeSongFromPlaylist,
+  setLibrary, addSongToLibrary, removeSongFromLibrary, scanFolder
+} from './actions';
 
 export {
-  addSong,
-  removeSong
+  addSongToPlaylist,
+  removeSongFromPlaylist,
+  setLibrary,
+  addSongToLibrary,
+  removeSongFromLibrary,
+  scanFolder
 };

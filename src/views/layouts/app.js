@@ -4,6 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline/CssBaseline';
 import { withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import routes from '../../routes';
+import Footer from './footer';
 
 const styles = {
   root: {
@@ -31,6 +32,7 @@ class App extends React.Component {
             ))
           }
         </main>
+        <Footer/>
       </div>
     );
   }
