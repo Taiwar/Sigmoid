@@ -1,3 +1,4 @@
+import { Howler } from 'howler';
 import * as types from '../features/audio/types';
 // eslint-disable-next-line no-undef
 const fs = window.require('fs');
@@ -36,17 +37,23 @@ function handleFiles(path, files, action, next) {
   const songs = [];
   files.forEach((file) => {
     const fullPath = nodePath.join(path, file);
-    const stat = fs.statSync(fullPath);
-    songs.push({
-      name: file,
-      path: fullPath,
-      type: mimeTypes.contentType(fullPath),
-      size: stat.size,
-      lastModified: new Date(stat.mtime)
-    });
+    const type = mimeTypes.contentType(fullPath);
+    if (type) {
+      const stat = fs.statSync(fullPath);
+      const codec = type.split('/')[1];
+      if (Howler.codecs(codec)) {
+        songs.push({
+          name: file,
+          path: fullPath,
+          type: mimeTypes.contentType(fullPath),
+          size: stat.size,
+          lastModified: new Date(stat.mtime)
+        });
+      }
+    }
   });
   next({
-    type: 'SET_LIBRARY',
+    type: types.SET_LIBRARY,
     songs
   });
 
