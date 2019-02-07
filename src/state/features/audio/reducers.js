@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import * as types from './types';
 import { createReducer } from '../../utils';
 
@@ -22,7 +24,13 @@ const libraryReducer = createReducer([], {
     .filter(song => song.path !== action.song.path)
 });
 
-export default combineReducers({
+const persistConfig = {
+  key: 'audio',
+  storage,
+  blacklist: ['playlist']
+};
+
+export default persistReducer(persistConfig, combineReducers({
   playlist: playlistReducer,
   library: libraryReducer
-});
+}));
