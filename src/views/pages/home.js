@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper/Paper';
 import FileDrop from 'react-file-drop';
 import { Howl } from 'howler';
 import Typography from '@material-ui/core/Typography/Typography';
+import Grid from '@material-ui/core/Grid/Grid';
 import { audioOperations } from '../../state/features/audio';
 import { NowPlaying, Playlist } from '../components';
 
@@ -16,15 +17,11 @@ const styles = theme => ({
   main: {
     width: 'auto',
     display: 'block',
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-      width: 900,
-      marginLeft: 'auto',
-      marginRight: 'auto',
-    },
+    marginLeft: theme.spacing.unit * 4,
+    marginRight: theme.spacing.unit * 4,
+    flexDirection: 'row',
   },
-  paper: {
+  playlist: {
     maxHeight: 500,
     overflow: 'auto',
     marginTop: theme.spacing.unit * 2,
@@ -32,7 +29,17 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+  },
+  library: {
+    maxHeight: 500,
+    overflow: 'auto',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
   },
 });
 
@@ -74,7 +81,7 @@ class Home extends React.Component {
   }
 
   render() {
-    const { playlist, classes } = this.props;
+    const { library, playlist, classes } = this.props;
 
     return (
       <div className={classes.main}>
@@ -84,15 +91,28 @@ class Home extends React.Component {
           onNext={() => {}}
           onPrev={() => {}}
         />
-        <Paper className={classes.paper}>
-          <FileDrop onDrop={(files, event) => this.handleOnDrop(files, event)}>
-            <Typography component='h2'>Drop some audio files here!</Typography>
-            <Playlist
-              playlist={playlist}
-              onPlay={this.handleOnPlay}
-            />
-          </FileDrop>
-        </Paper>
+        <Grid container spacing={8}>
+          <Grid item xs={8}>
+            <Paper className={classes.library}>
+              <Typography component='h2'>Library</Typography>
+              <Playlist
+                playlist={library}
+                onPlay={this.handleOnPlay}
+              />
+            </Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper className={classes.playlist}>
+              <FileDrop onDrop={(files, event) => this.handleOnDrop(files, event)}>
+                <Typography component='h2'>Playlist</Typography>
+                <Playlist
+                  playlist={playlist}
+                  onPlay={this.handleOnPlay}
+                />
+              </FileDrop>
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
     );
   }
@@ -101,17 +121,20 @@ class Home extends React.Component {
 Home.propTypes = {
   classes: PropTypes.object.isRequired,
   playlist: PropTypes.array,
+  library: PropTypes.array,
   history: PropTypes.object,
   onPlay: PropTypes.func,
   onAdd: PropTypes.func
 };
 
 Home.defaultProps = {
-  playlist: []
+  playlist: [],
+  library: []
 };
 
 const mapStateToProps = state => ({
-  playlist: state.audio.playlist
+  playlist: state.audio.playlist,
+  library: state.audio.library
 });
 
 const mapDispatchToProps = {
