@@ -1,21 +1,5 @@
 import * as types from './types';
 
-export const addSongToPlaylist = song => ({
-  type: types.ADD_SONG_PLAYLIST,
-  song: {
-    name: song.name,
-    path: song.path,
-    type: song.type,
-    size: song.size,
-    lastModified: song.lastModified
-  }
-});
-
-export const removeSongFromPlaylist = song => ({
-  type: types.REMOVE_SONG_PLAYLIST,
-  song
-});
-
 export const scanFolder = path => ({
   type: types.SCAN_FOLDER,
   path

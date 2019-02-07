@@ -11,7 +11,7 @@ import { Howl } from 'howler';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
 import { audioOperations } from '../../state/features/audio';
-import { NowPlaying, Playlist } from '../components';
+import { NowPlaying, Playlist, Library } from '../components';
 
 const styles = theme => ({
   main: {
@@ -20,6 +20,7 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 4,
     marginRight: theme.spacing.unit * 4,
     flexDirection: 'row',
+    overflow: 'hidden'
   },
   playlist: {
     maxHeight: 500,
@@ -48,9 +49,34 @@ class Home extends React.Component {
     super(props);
     this.state = {
       howl: null,
+      playlist: [],
       currentSong: null
     };
-    this.handleOnPlay = this.handleOnPlay.bind(this);
+    this.handleOnPlaylistPlay = this.handleOnPlaylistPlay.bind(this);
+    this.handleOnLibraryPlay = this.handleOnLibraryPlay.bind(this);
+  }
+
+  componentDidUpdate() {
+    const playlist = this.state.playlist;
+    const first = playlist.find(song => song.index === 1);
+    if (first && first !== this.state.currentSong) {
+      if (this.state.howl) this.state.howl.stop();
+      const sound = new Howl({
+        src: [first.path]
+      });
+      sound.volume(0.2);
+
+      this.setState({
+        howl: sound,
+        currentSong: first
+      });
+
+      sound.play();
+    }
+  }
+
+  componentWillUnmount() {
+    this.state.howl.stop();
   }
 
   handleOnDrop(files, event) {
@@ -62,26 +88,39 @@ class Home extends React.Component {
     });
   }
 
-  handleOnPlay(song) {
-    const sound = new Howl({
-      src: [song.path]
+  handleOnPlaylistPlay(song) {
+    const playlist = [];
+    let i = 2;
+    this.state.playlist.forEach((s) => {
+      if (s === song) {
+        s.index = 1;
+      } else if (s === this.state.currentSong) {
+        s.index = -1;
+      } else if (s.index < 0) {
+        s.index -= 1;
+      } else {
+        s.index = i;
+        i += 1;
+      }
+      playlist.push(s);
     });
-    sound.volume(0.2);
-
-    if (this.state.howl != null) {
-      this.state.howl.stop();
-    }
-
     this.setState({
-      howl: sound,
-      currentSong: song
+      playlist
     });
+  }
 
-    sound.play();
+  handleOnLibraryPlay(song) {
+    if (this.state.playlist.includes(song)) return;
+    const enqueued = this.state.playlist.filter(s => s.index > 0);
+    song.index = enqueued.length + 1;
+    this.setState({
+      playlist: [...this.state.playlist, song]
+    });
   }
 
   render() {
-    const { library, playlist, classes } = this.props;
+    const { library, classes } = this.props;
+    const playlist = this.state.playlist;
 
     return (
       <div className={classes.main}>
@@ -95,9 +134,9 @@ class Home extends React.Component {
           <Grid item xs={8}>
             <Paper className={classes.library}>
               <Typography component='h2'>Library</Typography>
-              <Playlist
-                playlist={library}
-                onPlay={this.handleOnPlay}
+              <Library
+                library={library}
+                onPlay={this.handleOnLibraryPlay}
               />
             </Paper>
           </Grid>
@@ -107,7 +146,7 @@ class Home extends React.Component {
                 <Typography component='h2'>Playlist</Typography>
                 <Playlist
                   playlist={playlist}
-                  onPlay={this.handleOnPlay}
+                  onPlay={this.handleOnPlaylistPlay}
                 />
               </FileDrop>
             </Paper>
@@ -128,12 +167,10 @@ Home.propTypes = {
 };
 
 Home.defaultProps = {
-  playlist: [],
   library: []
 };
 
 const mapStateToProps = state => ({
-  playlist: state.audio.playlist,
   library: state.audio.library
 });
 

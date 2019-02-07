@@ -15,7 +15,7 @@ import configureStore from './state/store';
 // eslint-disable-next-line no-undef
 const reduxStore = configureStore({
   audio: {
-    playlist: []
+    library: []
   }
 });
 

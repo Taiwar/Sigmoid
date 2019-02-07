@@ -80,7 +80,7 @@ class NowPlaying extends Component {
   render() {
     const { howl, song, classes } = this.props;
 
-    if (song == null) {
+    if (song == null || howl == null) {
       return (<div/>);
     }
 

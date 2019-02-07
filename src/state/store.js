@@ -9,8 +9,7 @@ import { fileService } from './middlewares';
 const persistConfig = {
   key: 'root',
   storage,
-  stateReconciler: autoMergeLevel2,
-  blacklist: ['audio']
+  stateReconciler: autoMergeLevel2
 };
 
 export default function configureStore(initialState) {

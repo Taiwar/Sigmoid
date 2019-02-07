@@ -3,23 +3,18 @@ import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withStyles } from '@material-ui/core';
 import List from '@material-ui/core/List/List';
-import PlaylistItem from './playlistItem';
+import SongItem from './songItem';
 
 const styles = {
 
 };
 
-class Playlist extends Component {
+class Library extends Component {
   render() {
-    const { onPlay, playlist } = this.props;
-    const sorted = playlist.sort((a, b) => {
-      if (a.index < b.index) return -1;
-      if (a.index > b.index) return 1;
-      return 0;
-    });
+    const { onPlay, library } = this.props;
 
-    const items = sorted.map(song => (
-      <PlaylistItem
+    const items = library.map(song => (
+      <SongItem
         key={song.path}
         song={song}
         onPlay={onPlay}
@@ -34,12 +29,12 @@ class Playlist extends Component {
   }
 }
 
-Playlist.propTypes = {
-  playlist: PropTypes.array.isRequired,
+Library.propTypes = {
+  library: PropTypes.array.isRequired,
   onPlay: PropTypes.func.isRequired,
   classes: PropTypes.object
 };
 
 export default compose(
   withStyles(styles)
-)(Playlist);
+)(Library);
