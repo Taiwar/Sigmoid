@@ -120,7 +120,9 @@ class Home extends React.Component {
   }
 
   render() {
-    const { library, classes } = this.props;
+    const {
+      volume, onStoreVolume, library, classes
+    } = this.props;
     const playlist = this.state.playlist;
 
     return (
@@ -133,7 +135,7 @@ class Home extends React.Component {
         />
         <Grid container spacing={8}>
           <Grid item xs={1}>
-            <VolumeSlider howl={this.state.howl}/>
+            <VolumeSlider volume={volume} storeVolume={onStoreVolume}/>
           </Grid>
           <Grid item xs={7}>
             <Paper className={classes.library}>
@@ -167,7 +169,9 @@ Home.propTypes = {
   library: PropTypes.array,
   history: PropTypes.object,
   onPlay: PropTypes.func,
-  onAdd: PropTypes.func
+  onAdd: PropTypes.func,
+  onStoreVolume: PropTypes.func,
+  volume: PropTypes.number
 };
 
 Home.defaultProps = {
@@ -175,11 +179,13 @@ Home.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  library: state.audio.library
+  library: state.audio.library,
+  volume: state.audio.volume
 });
 
 const mapDispatchToProps = {
-  onAdd: audioOperations.addSongToPlaylist
+  onAdd: audioOperations.addSongToPlaylist,
+  onStoreVolume: audioOperations.setVolume
 };
 
 export default compose(

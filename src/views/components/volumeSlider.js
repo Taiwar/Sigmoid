@@ -28,19 +28,10 @@ class VolumeSlider extends Component {
     super(props);
     this.state = {
       isMuted: false,
-      volume: 0.0,
     };
+    Howler.volume(props.volume);
     this.handleToggle = this.handleToggle.bind(this);
     this.handleSeekerChange = this.handleSeekerChange.bind(this);
-  }
-
-  componentDidUpdate() {
-    const volume = Howler.volume();
-    if (this.state.volume !== volume) {
-      this.setState({
-        volume
-      });
-    }
   }
 
   handleToggle() {
@@ -52,18 +43,15 @@ class VolumeSlider extends Component {
 
   handleSeekerChange(e, val) {
     Howler.volume(val / 100);
-    this.setState({
-      volume: val
-    });
+    this.props.storeVolume(val);
   }
 
   render() {
-    const { classes } = this.props;
-
+    const { volume, classes } = this.props;
     return (
       <Paper className={classes.paper}>
         <Slider
-          value={this.state.volume * 100}
+          value={volume}
           vertical={true}
           onChange={this.handleSeekerChange}
           onDragEnd={this.handleSeekerEnd}
@@ -77,7 +65,9 @@ class VolumeSlider extends Component {
 }
 
 VolumeSlider.propTypes = {
-  classes: PropTypes.object
+  classes: PropTypes.object,
+  storeVolume: PropTypes.func,
+  volume: PropTypes.number
 };
 
 export default compose(

@@ -25,3 +25,8 @@ export const removeSongFromLibrary = song => ({
   type: types.REMOVE_SONG_LIBRARY,
   song
 });
+
+export const setVolume = volume => ({
+  type: types.SET_VOLUME,
+  volume
+});

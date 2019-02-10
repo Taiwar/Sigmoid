@@ -1,11 +1,12 @@
 /* eslint-disable import/prefer-default-export */
 import {
-  setLibrary, addSongToLibrary, removeSongFromLibrary, scanFolder
+  scanFolder, setLibrary, addSongToLibrary, removeSongFromLibrary, setVolume
 } from './actions';
 
 export {
+  scanFolder,
   setLibrary,
   addSongToLibrary,
   removeSongFromLibrary,
-  scanFolder
+  setVolume
 };

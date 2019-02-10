@@ -4,7 +4,8 @@ import { createReducer } from '../../utils';
 
 /* State shape
 {
-    library: [song]
+    library: [song],
+    volume: float
 }
 */
 
@@ -15,7 +16,11 @@ const libraryReducer = createReducer([], {
     .filter(song => song.path !== action.song.path)
 });
 
+const volumeReducer = createReducer([], {
+  [types.SET_VOLUME]: (volume, action) => action.volume,
+});
 
 export default combineReducers({
-  library: libraryReducer
+  library: libraryReducer,
+  volume: volumeReducer
 });
