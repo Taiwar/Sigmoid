@@ -27,8 +27,7 @@ class PlaylistItem extends Component {
       <ListItem dense button onClick={this.handleClick}>
         <Typography>{song.index}</Typography>
         <ListItemText
-          primary={song.name}
-          secondary={song.path}
+          primary={song.name.split('.').slice(0, -1).join('.')}
         />
       </ListItem>
     );

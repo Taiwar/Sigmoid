@@ -30,7 +30,7 @@ class SongItem extends Component {
           <MusicNoteIcon />
         </ListItemIcon>
         <ListItemText
-          primary={song.name}
+          primary={song.name.split('.').slice(0, -1).join('.')}
           secondary={song.path}
         />
       </ListItem>
