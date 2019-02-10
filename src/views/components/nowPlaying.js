@@ -2,20 +2,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withStyles } from '@material-ui/core';
-import PlayIcon from '@material-ui/icons/PlayArrow';
-import PauseIcon from '@material-ui/icons/Pause';
 import Paper from '@material-ui/core/Paper/Paper';
 import Typography from '@material-ui/core/Typography/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Slider from '@material-ui/lab/Slider';
 import Grid from '@material-ui/core/Grid/Grid';
+import PlayIcon from '@material-ui/icons/PlayArrow';
+import PauseIcon from '@material-ui/icons/Pause';
+import PrevIcon from '@material-ui/icons/SkipPrevious';
+import NextIcon from '@material-ui/icons/SkipNext';
 
 const styles = theme => ({
   paper: {
     marginTop: theme.spacing.unit * 4,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
     padding: `${theme.spacing.unit * 3}px`,
   },
   button: {
@@ -78,7 +77,9 @@ class NowPlaying extends Component {
   }
 
   render() {
-    const { howl, song, classes } = this.props;
+    const {
+      howl, song, classes, onNext, onPrev
+    } = this.props;
 
     if (song == null || howl == null) {
       return (<div/>);
@@ -94,11 +95,23 @@ class NowPlaying extends Component {
             <Typography component="h2">{song.name}</Typography>
           </Grid>
           <Grid item xs={12}>
-            <div align="center">
-              <IconButton onClick={this.handleToggle}>
-                {this.state.isPlaying ? <PauseIcon/> : <PlayIcon/>}
-              </IconButton>
-            </div>
+            <Grid container justify="center">
+              <Grid item>
+                <IconButton onClick={onPrev}>
+                  <PrevIcon/>
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <IconButton onClick={this.handleToggle}>
+                  {this.state.isPlaying ? <PauseIcon/> : <PlayIcon/>}
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <IconButton onClick={onNext}>
+                  <NextIcon/>
+                </IconButton>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item xs={12}>
             <Slider

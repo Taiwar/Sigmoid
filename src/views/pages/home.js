@@ -66,6 +66,9 @@ class Home extends React.Component {
       const sound = new Howl({
         src: [first.path]
       });
+      sound.on('end', () => {
+        this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === 2));
+      });
 
       this.setState({
         howl: sound,
@@ -130,7 +133,7 @@ class Home extends React.Component {
         <NowPlaying
           song={this.state.currentSong}
           howl={this.state.howl}
-          onNext={() => {}}
+          onNext={() => this.handleOnPlaylistPlay(playlist.find(song => song.index === 2))}
           onPrev={() => {}}
         />
         <Grid container spacing={8}>
