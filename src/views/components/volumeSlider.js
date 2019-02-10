@@ -29,7 +29,6 @@ class VolumeSlider extends Component {
     this.state = {
       isMuted: false,
     };
-    Howler.volume(props.volume);
     this.handleToggle = this.handleToggle.bind(this);
     this.handleSeekerChange = this.handleSeekerChange.bind(this);
   }

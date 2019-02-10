@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import Paper from '@material-ui/core/Paper/Paper';
 import FileDrop from 'react-file-drop';
-import { Howl } from 'howler';
+import { Howl, Howler } from 'howler';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
 import { audioOperations } from '../../state/features/audio';
@@ -69,6 +69,7 @@ class Home extends React.Component {
       sound.on('end', () => {
         this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === 2));
       });
+      Howler.volume(this.props.volume / 100);
 
       this.setState({
         howl: sound,
@@ -187,7 +188,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  onAdd: audioOperations.addSongToPlaylist,
+  onAdd: audioOperations.addSongToLibrary,
   onStoreVolume: audioOperations.setVolume
 };
 
