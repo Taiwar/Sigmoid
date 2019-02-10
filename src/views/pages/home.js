@@ -11,7 +11,9 @@ import { Howl } from 'howler';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
 import { audioOperations } from '../../state/features/audio';
-import { NowPlaying, Playlist, Library } from '../components';
+import {
+  NowPlaying, Playlist, Library, VolumeSlider
+} from '../components';
 
 const styles = theme => ({
   main: {
@@ -64,7 +66,6 @@ class Home extends React.Component {
       const sound = new Howl({
         src: [first.path]
       });
-      sound.volume(0.2);
 
       this.setState({
         howl: sound,
@@ -131,7 +132,10 @@ class Home extends React.Component {
           onPrev={() => {}}
         />
         <Grid container spacing={8}>
-          <Grid item xs={8}>
+          <Grid item xs={1}>
+            <VolumeSlider howl={this.state.howl}/>
+          </Grid>
+          <Grid item xs={7}>
             <Paper className={classes.library}>
               <Typography component='h2'>Library</Typography>
               <Library
