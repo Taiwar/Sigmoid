@@ -1,55 +1,34 @@
 import { Howler } from 'howler';
 import * as types from '../features/audio/types';
 // eslint-disable-next-line no-undef
-const fs = window.require('fs');
+const { resolve } = window.require('path');
 // eslint-disable-next-line no-undef
-const nodePath = window.require('path');
+const { readdir, stat } = window.require('fs').promises;
 // eslint-disable-next-line no-undef
 const mimeTypes = window.require('mime-types');
 
 const fileService = () => next => (action) => {
-  const result = next(action);
   if (action.type !== types.SCAN_FOLDER) {
-    return result;
+    return next(action);
   }
 
   if (!action.path) {
     throw new Error(`'path' not specified for action ${action.type}`);
   }
 
-  return fs.readdir(action.path, (err, files) => {
-    if (err) {
-      handleErrors(err, action, next);
-    }
-    handleFiles(action.path, files, action, next);
-  });
+  return getFiles(action.path)
+    .then(files => handleFiles(files, action, next))
+    .catch(e => console.error(e)); // TODO: Proper error handling
 };
 
 export default fileService;
 
-// eslint-disable-next-line no-unused-vars
-function handleErrors(err, action, next) {
-  // TODO: Implement error handling
-  return Promise.reject(err);
-}
-
-function handleFiles(path, files, action, next) {
+function handleFiles(files, action, next) {
   const songs = [];
-  files.forEach((file) => {
-    const fullPath = nodePath.join(path, file);
-    const type = mimeTypes.contentType(fullPath);
-    if (type) {
-      const stat = fs.statSync(fullPath);
-      const codec = type.split('/')[1];
-      if (Howler.codecs(codec)) {
-        songs.push({
-          name: file,
-          path: fullPath,
-          type: mimeTypes.contentType(fullPath),
-          size: stat.size,
-          lastModified: new Date(stat.mtime)
-        });
-      }
+  files.forEach(async (file) => {
+    const codec = file.type.split('/')[1];
+    if (Howler.codecs(codec)) {
+      songs.push(file);
     }
   });
   next({
@@ -58,4 +37,20 @@ function handleFiles(path, files, action, next) {
   });
 
   return files;
+}
+
+async function getFiles(dir) {
+  const subdirs = await readdir(dir);
+  const files = await Promise.all(subdirs.map(async (subdir) => {
+    const res = resolve(dir, subdir);
+    const dirStat = await stat(res);
+    return await dirStat.isDirectory() ? getFiles(res) : {
+      name: subdir,
+      path: res,
+      type: mimeTypes.contentType(res),
+      size: dirStat.size,
+      lastModified: new Date(dirStat.mtime)
+    };
+  }));
+  return Array.prototype.concat(...files);
 }
