@@ -7,6 +7,13 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import Typography from '@material-ui/core/Typography/Typography';
 
 const styles = {
+  item: {
+    borderBottom: '1px solid #999999'
+  },
+  played: {
+    backgroundColor: '#ddd',
+    borderBottom: '1px solid #999'
+  }
 };
 
 class PlaylistItem extends Component {
@@ -21,10 +28,10 @@ class PlaylistItem extends Component {
   }
 
   render() {
-    const { song } = this.props;
+    const { classes, song } = this.props;
 
     return (
-      <ListItem dense button onClick={this.handleClick}>
+      <ListItem className={song.index > 0 ? classes.item : classes.played} dense button onClick={this.handleClick}>
         <Typography>{song.index}</Typography>
         <ListItemText
           primary={song.name.split('.').slice(0, -1).join('.')}
