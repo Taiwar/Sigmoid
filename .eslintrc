@@ -1,60 +1,25 @@
 {
   "rules": {
-    "indent": [
-      2,
-      2,
-      {
-        "SwitchCase": 1
-      }
-    ],
-    "linebreak-style": "off",
-    "space-before-function-paren": [
-      2,
-      {
-        "anonymous": "always",
-        "named": "never"
-      }
-    ],
-    "no-use-before-define": [
-      2,
-      "nofunc"
-    ],
-    "no-param-reassign": [
-      2,
-      {
-        "props": false
-      }
-    ],
-    "prefer-destructuring": [
-      0
-    ],
-    "comma-dangle": [
-      0
-    ],
-    "prefer-default-export": [
-      0
-    ],
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": true
-      }
-    ],
-    "no-underscore-dangle": [
-      0
-    ]
-  },
-  "env": {
-    "node": true,
-    "mocha": true
+    "react/jsx-no-bind": ["error", {
+      "allowArrowFunctions": true,
+      "allowBind": false,
+      "ignoreRefs": true
+    }],
+    "react/no-did-update-set-state": "error",
+    "react/no-unknown-property": "error",
+    "react/no-unused-prop-types": "error",
+    "react/prop-types": "error",
+    "react/react-in-jsx-scope": "error"
   },
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 2018,
+    "ecmaFeatures": {
+      "jsx": true
+    },
     "sourceType": "module"
   },
   "extends": [
     "eslint:recommended",
-    "airbnb-base",
     "plugin:react/recommended"
   ]
 }
