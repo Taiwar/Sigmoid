@@ -30,7 +30,6 @@ class NowPlaying extends Component {
       completed: 0,
       interval: null
     };
-    this.handleToggle = this.handleToggle.bind(this);
     this.handleSeekerChange = this.handleSeekerChange.bind(this);
     this.handleSeekerEnd = this.handleSeekerEnd.bind(this);
   }
@@ -52,15 +51,6 @@ class NowPlaying extends Component {
     clearInterval(this.state.interval);
   }
 
-  handleToggle(e) {
-    e.preventDefault();
-    if (this.props.howl.playing()) {
-      this.props.howl.pause();
-    } else {
-      this.props.howl.play();
-    }
-  }
-
   handleSeekerChange(e, val) {
     // If steps are larger == Slider has been clicked on, not just slided so change immediately
     // TODO: See if this can be done more elegantly
@@ -78,7 +68,7 @@ class NowPlaying extends Component {
 
   render() {
     const {
-      howl, song, classes, onNext, onPrev
+      howl, song, classes, onNext, onPrev, onToggle
     } = this.props;
 
     if (song == null || howl == null) {
@@ -102,7 +92,7 @@ class NowPlaying extends Component {
                 </IconButton>
               </Grid>
               <Grid item>
-                <IconButton onClick={this.handleToggle}>
+                <IconButton onClick={onToggle}>
                   {this.state.isPlaying ? <PauseIcon/> : <PlayIcon/>}
                 </IconButton>
               </Grid>
@@ -131,6 +121,7 @@ NowPlaying.propTypes = {
   song: PropTypes.object,
   onNext: PropTypes.func.isRequired,
   onPrev: PropTypes.func.isRequired,
+  onToggle: PropTypes.func.isRequired,
   classes: PropTypes.object
 };
 

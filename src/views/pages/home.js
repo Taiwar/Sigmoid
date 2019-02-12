@@ -14,6 +14,7 @@ import { audioOperations } from '../../state/features/audio';
 import {
   NowPlaying, Playlist, Library, VolumeSlider
 } from '../components';
+const { globalShortcut } = window.require('electron').remote;
 
 const styles = theme => ({
   main: {
@@ -56,6 +57,21 @@ class Home extends React.Component {
     };
     this.handleOnPlaylistPlay = this.handleOnPlaylistPlay.bind(this);
     this.handleOnLibraryPlay = this.handleOnLibraryPlay.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
+    this.handleNext = this.handleNext.bind(this);
+    this.handlePrev = this.handlePrev.bind(this);
+  }
+
+  componentDidMount() {
+    if (!globalShortcut.isRegistered('mediaplaypause'))
+      globalShortcut.register('mediaplaypause', this.handleToggle);
+
+    if (!globalShortcut.isRegistered('medianexttrack'))
+      globalShortcut.register('medianexttrack', this.handleNext);
+
+    if (!globalShortcut.isRegistered('mediaprevioustrack'))
+      globalShortcut.register('mediaprevioustrack', this.handlePrev);
+
   }
 
   componentDidUpdate() {
@@ -82,6 +98,9 @@ class Home extends React.Component {
 
   componentWillUnmount() {
     this.state.howl.stop();
+    globalShortcut.unregister('mediaplaypause');
+    globalShortcut.unregister('medianexttrack');
+    globalShortcut.unregister('mediaprevioustrack');
   }
 
   handleOnDrop(files, event) {
@@ -93,6 +112,7 @@ class Home extends React.Component {
     });
   }
 
+  // TODO: This is still very broken
   handleOnPlaylistPlay(song) {
     const playlist = [];
     let i = 2;
@@ -123,19 +143,35 @@ class Home extends React.Component {
     });
   }
 
+  handleToggle() {
+    if (this.state.howl.playing()) {
+      this.state.howl.pause();
+    } else {
+      this.state.howl.play();
+    }
+  }
+
+  handlePrev() {
+    return this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === -1))
+  }
+
+  handleNext() {
+    return this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === 2))
+  }
+
   render() {
     const {
       volume, onStoreVolume, library, classes
     } = this.props;
-    const playlist = this.state.playlist;
 
     return (
       <div className={classes.main}>
         <NowPlaying
           song={this.state.currentSong}
           howl={this.state.howl}
-          onNext={() => this.handleOnPlaylistPlay(playlist.find(song => song.index === 2))}
-          onPrev={() => {}}
+          onNext={this.handleNext}
+          onPrev={this.handlePrev}
+          onToggle={this.handleToggle}
         />
         <Grid container spacing={8}>
           <Grid item xs={1}>
@@ -155,7 +191,7 @@ class Home extends React.Component {
               <FileDrop onDrop={(files, event) => this.handleOnDrop(files, event)}>
                 <Typography component='h2'>Playlist</Typography>
                 <Playlist
-                  playlist={playlist}
+                  playlist={this.state.playlist}
                   onPlay={this.handleOnPlaylistPlay}
                 />
               </FileDrop>
