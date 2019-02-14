@@ -38,6 +38,7 @@
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.10.0",
+    "register-scheme": "^0.0.2",
     "typeface-roboto": "^0.0.54"
   },
   "devDependencies": {
@@ -45,8 +46,6 @@
     "electron": "^4.0.3",
     "electron-builder": "^20.38.5",
     "eslint": "5.6.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-react": "^7.12.3",
     "wait-on": "^3.2.0"
   },
