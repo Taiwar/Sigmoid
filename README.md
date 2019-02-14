@@ -1,5 +1,5 @@
 # Sigmoid
-![Alt text](/public/icon.png?raw=true)
+<img src="/public/icon.png?raw=true" alt="drawing" width="200"/>
 
 ## Running Sigmoid
 
