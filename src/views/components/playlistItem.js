@@ -34,7 +34,7 @@ class PlaylistItem extends Component {
       <ListItem className={song.index > 0 ? classes.item : classes.played} dense button onClick={this.handleClick}>
         <Typography>{song.index}</Typography>
         <ListItemText
-          primary={song.name.split('.').slice(0, -1).join('.')}
+          primary={song.name}
         />
       </ListItem>
     );

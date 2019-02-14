@@ -45,7 +45,7 @@ async function getFiles(dir) {
     const res = resolve(dir, subdir);
     const dirStat = await stat(res);
     return await dirStat.isDirectory() ? getFiles(res) : {
-      name: subdir,
+      name: subdir.split('.').slice(0, -1).join('.'),
       path: res,
       type: mimeTypes.contentType(res),
       size: dirStat.size,
