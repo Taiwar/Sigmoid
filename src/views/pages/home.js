@@ -11,6 +11,7 @@ import { Howl, Howler } from 'howler';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
 import { audioOperations } from '../../state/features/audio';
+import { discordOperations } from '../../state/features/discord';
 import {
   NowPlaying, Playlist, Library, VolumeSlider
 } from '../components';
@@ -63,6 +64,8 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    this.props.initRpc();
+
     if (!globalShortcut.isRegistered('mediaplaypause'))
       globalShortcut.register('mediaplaypause', this.handleToggle);
 
@@ -74,30 +77,40 @@ class Home extends React.Component {
 
   }
 
-  componentDidUpdate() {
-    const playlist = this.state.playlist;
-    const first = playlist.find(song => song.index === 1);
-    if (first && first !== this.state.currentSong) {
-      if (this.state.howl) this.state.howl.stop();
-      const sound = new Howl({
-        src: [first.path]
-      });
-      sound.on('end', () => {
-        this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === 2));
-      });
-      Howler.volume(this.props.volume / 100);
+  // eslint-disable-next-line no-unused-vars
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.playlist !== this.state.playlist) {
+      const first = this.state.playlist.find(song => song.index === 1);
+      if (first && first !== this.state.currentSong) {
+        if (prevState.howl) prevState.howl.stop();
+        if (this.state.howl) this.state.howl.stop();
+        const sound = new Howl({
+          src: [first.path]
+        });
+        sound.on('end', this.handleNext);
+        Howler.volume(this.props.volume / 100);
 
-      this.setState({
-        howl: sound,
-        currentSong: first
-      });
+        this.props.setPresence(this.props.rpc, {
+          details: first.name,
+          state: 'Listening',
+          largeImageKey: 'sigmoid_large',
+          largeImageText: 'Sigmoid',
+          startTimestamp: new Date()
+        });
 
-      sound.play();
+        sound.play();
+        // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({
+          howl: sound,
+          currentSong: first
+        });
+      }
     }
   }
 
   componentWillUnmount() {
     this.state.howl.stop();
+    this.props.rpc.destroy();
     globalShortcut.unregister('mediaplaypause');
     globalShortcut.unregister('medianexttrack');
     globalShortcut.unregister('mediaprevioustrack');
@@ -114,24 +127,26 @@ class Home extends React.Component {
 
   // TODO: This is still very broken
   handleOnPlaylistPlay(song) {
-    const playlist = [];
-    let i = 2;
-    this.state.playlist.forEach((s) => {
-      if (s === song) {
-        s.index = 1;
-      } else if (s === this.state.currentSong) {
-        s.index = -1;
-      } else if (s.index < 0) {
-        s.index -= 1;
-      } else {
-        s.index = i;
-        i += 1;
-      }
-      playlist.push(s);
-    });
-    this.setState({
-      playlist
-    });
+    if (song !== this.state.currentSong) {
+      const playlist = [];
+      let i = 2;
+      this.state.playlist.forEach((s) => {
+        if (s === song) {
+          s.index = 1;
+        } else if (s === this.state.currentSong) {
+          s.index = -1;
+        } else if (s.index < 0) {
+          s.index -= 1;
+        } else {
+          s.index = i;
+          i += 1;
+        }
+        playlist.push(s);
+      });
+      this.setState({
+        playlist
+      });
+    }
   }
 
   handleOnLibraryPlay(song) {
@@ -205,13 +220,13 @@ class Home extends React.Component {
 
 Home.propTypes = {
   classes: PropTypes.object.isRequired,
-  playlist: PropTypes.array,
   library: PropTypes.array,
-  history: PropTypes.object,
-  onPlay: PropTypes.func,
+  volume: PropTypes.number,
+  rpc: PropTypes.object,
+  initRpc: PropTypes.func,
+  setPresence: PropTypes.func,
   onAdd: PropTypes.func,
   onStoreVolume: PropTypes.func,
-  volume: PropTypes.number
 };
 
 Home.defaultProps = {
@@ -220,12 +235,15 @@ Home.defaultProps = {
 
 const mapStateToProps = state => ({
   library: state.audio.library,
-  volume: state.audio.volume
+  volume: state.audio.volume,
+  rpc: state.discord.rpc
 });
 
 const mapDispatchToProps = {
   onAdd: audioOperations.addSongToLibrary,
-  onStoreVolume: audioOperations.setVolume
+  onStoreVolume: audioOperations.setVolume,
+  initRpc: discordOperations.init,
+  setPresence: discordOperations.setPresence
 };
 
 export default compose(
