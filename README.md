@@ -1,5 +1,5 @@
 # Sigmoid
-<img src="/public/icon.png?raw=true" alt="drawing" width="200"/>
+<img src="/public/icon.png?raw=true" alt="Sigmoid logo" width="200"/>
 
 ## Running Sigmoid
 
