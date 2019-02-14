@@ -8,23 +8,24 @@ const discordService = () => next => (action) => {
     const clientId = process.env.REACT_APP_CLIENT_ID;
     if (clientId !== undefined && clientId !== '') {
       discordRPC.register(clientId);
+      const rpc = new discordRPC.Client({ transport: 'ipc' });
+      rpc.login({ clientId }).catch(console.error);
+      rpc.on('ready', () => {
+        next({
+          type: types.INIT_SUCCESS,
+          rpc
+        });
+      });
     }
-
-    const rpc = new discordRPC.Client({ transport: 'ipc' });
-    rpc.login({ clientId }).catch(console.error);
-    rpc.on('ready', () => {
-      next({
-        type: types.INIT_SUCCESS,
-        rpc
-      });
-    });
   } else if (action.type === types.SET_PRESENCE) {
-    setActivity(action.rpc, action.presence).then(() => {
-      next({
-        type: types.SET_PRESENCE_SUCCESS,
-        presence: action.presence
+    if (action.rpc !== null) {
+      setActivity(action.rpc, action.presence).then(() => {
+        next({
+          type: types.SET_PRESENCE_SUCCESS,
+          presence: action.presence
+        });
       });
-    });
+    }
   }
   return next(action);
 };

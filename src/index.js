@@ -17,6 +17,10 @@ const reduxStore = configureStore({
   audio: {
     library: [],
     volume: 0.5
+  },
+  discord: {
+    rpc: null,
+    presence: null
   }
 });
 
