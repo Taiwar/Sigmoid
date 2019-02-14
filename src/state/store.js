@@ -8,6 +8,7 @@ import { fileService, discordService } from './middlewares';
 
 const persistConfig = {
   key: 'root',
+  blacklist: ['discord'],
   storage,
   stateReconciler: autoMergeLevel2
 };
