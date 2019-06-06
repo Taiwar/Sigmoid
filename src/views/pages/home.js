@@ -15,6 +15,7 @@ import { discordOperations } from '../../state/features/discord';
 import {
   NowPlaying, Playlist, Library, VolumeSlider
 } from '../components';
+import FolderView from '../components/folderView';
 
 const { globalShortcut } = require('electron').remote;
 
@@ -198,13 +199,7 @@ class Home extends React.Component {
             <VolumeSlider volume={volume} storeVolume={onStoreVolume}/>
           </Grid>
           <Grid item xs={7}>
-            <Paper className={classes.library}>
-              <Typography component='h2'>Library</Typography>
-              <Library
-                library={library}
-                onPlay={this.handleOnLibraryPlay}
-              />
-            </Paper>
+            <FolderView onPlay={this.handleOnLibraryPlay}/>
           </Grid>
           <Grid item xs={4}>
             <Paper className={classes.playlist}>

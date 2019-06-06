@@ -1,6 +1,11 @@
-/* eslint-disable import/prefer-default-export */
 import {
-  scanFolder, setLibrary, addSongToLibrary, removeSongFromLibrary, setVolume
+  scanFolder,
+  setLibrary,
+  addSongToLibrary,
+  removeSongFromLibrary,
+  setVolume,
+  getTreeSlice,
+  setDirectoryRoot
 } from './actions';
 
 export {
@@ -8,5 +13,7 @@ export {
   setLibrary,
   addSongToLibrary,
   removeSongFromLibrary,
-  setVolume
+  setVolume,
+  getTreeSlice,
+  setDirectoryRoot
 };

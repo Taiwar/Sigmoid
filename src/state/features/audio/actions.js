@@ -5,6 +5,16 @@ export const scanFolder = path => ({
   path
 });
 
+export const setDirectoryRoot = path => ({
+  type: types.SET_DIRECTORY_ROOT,
+  path
+});
+
+export const getTreeSlice = path => ({
+  type: types.GET_TREE_SLICE,
+  path
+});
+
 export const setLibrary = songs => ({
   type: types.SET_LIBRARY,
   songs
