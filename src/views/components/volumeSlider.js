@@ -13,7 +13,7 @@ import Fab from '@material-ui/core/Fab';
 const styles = theme => ({
   slider: {
     marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(1.2),
     height: 200,
     width: 25,
     display: 'flex',
@@ -51,7 +51,7 @@ class VolumeSlider extends Component {
     const { volume, classes } = this.props;
     return (
       <div>
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <Paper className={classes.slider}>
               <Slider
