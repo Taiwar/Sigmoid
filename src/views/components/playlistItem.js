@@ -11,7 +11,7 @@ const styles = {
     borderBottom: '1px solid #999999'
   },
   played: {
-    backgroundColor: '#ddd',
+    opacity: 0.6,
     borderBottom: '1px solid #999'
   }
 };
@@ -31,8 +31,9 @@ class PlaylistItem extends Component {
     const { classes, song } = this.props;
 
     return (
-      <ListItem className={song.index > 0 ? classes.item : classes.played} dense button onClick={this.handleClick}>
+      <ListItem className={song.index > 0 ? classes.item : classes.played} dense button onClick={this.handleClick} component="li">
         <Typography>{song.index}</Typography>
+        &nbsp;
         <ListItemText
           primary={song.name}
         />

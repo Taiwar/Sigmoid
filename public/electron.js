@@ -12,7 +12,10 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 900,
-    webPreferences: { webSecurity: !isDev }
+    webPreferences: {
+      webSecurity: !isDev,
+      nodeIntegration: true
+    }
   });
   if (isDev) {
     mainWindow.loadURL('http://localhost:3000');

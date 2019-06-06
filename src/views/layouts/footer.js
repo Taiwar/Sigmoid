@@ -8,7 +8,7 @@ import connect from 'react-redux/es/connect/connect';
 import * as audioOperations from '../../state/features/audio/operations';
 
 // eslint-disable-next-line no-undef
-const dialog = window.require('electron').remote.dialog;
+const dialog = require('electron').remote.dialog;
 
 const styles = theme => ({
   footer: {

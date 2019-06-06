@@ -1,6 +1,6 @@
 import * as types from '../features/discord/types';
 // eslint-disable-next-line no-undef
-const discordRPC = window.require('discord-rpc');
+const discordRPC = require('discord-rpc');
 
 const discordService = () => next => (action) => {
   if (action.type === types.INIT) {

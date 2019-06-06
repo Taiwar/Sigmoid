@@ -14,12 +14,13 @@ import NextIcon from '@material-ui/icons/SkipNext';
 
 const styles = theme => ({
   paper: {
-    marginTop: theme.spacing.unit * 4,
-    padding: `${theme.spacing.unit * 3}px`,
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(4),
   },
-  button: {
-    margin: theme.spacing.unit,
-  },
+  controls: {
+    padding: 0,
+    margin: 0
+  }
 });
 
 class NowPlaying extends Component {
@@ -80,24 +81,24 @@ class NowPlaying extends Component {
 
     return (
       <Paper className={classes.paper}>
-        <Grid container spacing={8}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography component="h2">{song.name}</Typography>
           </Grid>
           <Grid item xs={12}>
             <Grid container justify="center">
               <Grid item>
-                <IconButton onClick={onPrev}>
+                <IconButton onClick={onPrev} href={""}>
                   <PrevIcon/>
                 </IconButton>
               </Grid>
-              <Grid item>
-                <IconButton onClick={onToggle}>
+              <Grid item className={classes.controls}>
+                <IconButton onClick={onToggle} href={""}>
                   {this.state.isPlaying ? <PauseIcon/> : <PlayIcon/>}
                 </IconButton>
               </Grid>
               <Grid item>
-                <IconButton onClick={onNext}>
+                <IconButton onClick={onNext} href={""}>
                   <NextIcon/>
                 </IconButton>
               </Grid>

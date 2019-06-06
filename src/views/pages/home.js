@@ -15,7 +15,8 @@ import { discordOperations } from '../../state/features/discord';
 import {
   NowPlaying, Playlist, Library, VolumeSlider
 } from '../components';
-const { globalShortcut } = window.require('electron').remote;
+
+const { globalShortcut } = require('electron').remote;
 
 const styles = theme => ({
   main: {
@@ -34,7 +35,7 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`
   },
   library: {
     maxHeight: 500,
@@ -44,8 +45,8 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
-  },
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`
+  }
 });
 
 class Home extends React.Component {
@@ -66,14 +67,17 @@ class Home extends React.Component {
   componentDidMount() {
     this.props.initRpc();
 
-    if (!globalShortcut.isRegistered('mediaplaypause'))
+    if (!globalShortcut.isRegistered('mediaplaypause')) {
       globalShortcut.register('mediaplaypause', this.handleToggle);
+    }
 
-    if (!globalShortcut.isRegistered('medianexttrack'))
+    if (!globalShortcut.isRegistered('medianexttrack')) {
       globalShortcut.register('medianexttrack', this.handleNext);
+    }
 
-    if (!globalShortcut.isRegistered('mediaprevioustrack'))
+    if (!globalShortcut.isRegistered('mediaprevioustrack')) {
       globalShortcut.register('mediaprevioustrack', this.handlePrev);
+    }
 
   }
 
@@ -118,11 +122,12 @@ class Home extends React.Component {
 
   handleOnDrop(files, event) {
     event.preventDefault();
-    Object.keys(files).forEach((key) => {
-      if (files[key].type === 'audio/mp3') {
-        this.props.onAdd(files[key]);
-      }
-    });
+    Object.keys(files)
+      .forEach((key) => {
+        if (files[key].type === 'audio/mp3') {
+          this.props.onAdd(files[key]);
+        }
+      });
   }
 
   // TODO: This is still very broken
@@ -167,11 +172,11 @@ class Home extends React.Component {
   }
 
   handlePrev() {
-    return this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === -1))
+    return this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === -1));
   }
 
   handleNext() {
-    return this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === 2))
+    return this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === 2));
   }
 
   render() {
@@ -226,7 +231,7 @@ Home.propTypes = {
   initRpc: PropTypes.func,
   setPresence: PropTypes.func,
   onAdd: PropTypes.func,
-  onStoreVolume: PropTypes.func,
+  onStoreVolume: PropTypes.func
 };
 
 Home.defaultProps = {
