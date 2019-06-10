@@ -3,13 +3,11 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withStyles } from '@material-ui/core';
-import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { audioOperations } from '../../state/features/audio';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
-import PlaylistItem from './playlistItem';
 import DirItem from './dirItem';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -101,6 +99,5 @@ const mapDispatchToProps = {
 
 export default compose(
   withStyles(styles),
-  withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(FolderView);

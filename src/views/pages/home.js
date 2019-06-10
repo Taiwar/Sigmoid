@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core';
-import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import Paper from '@material-ui/core/Paper/Paper';
@@ -13,9 +12,8 @@ import Grid from '@material-ui/core/Grid/Grid';
 import { audioOperations } from '../../state/features/audio';
 import { discordOperations } from '../../state/features/discord';
 import {
-  NowPlaying, Playlist, VolumeSlider
+  NowPlaying, Playlist, VolumeSlider, FolderView
 } from '../components';
-import FolderView from '../components/folderView';
 
 const { globalShortcut } = require('electron').remote;
 
@@ -222,6 +220,5 @@ const mapDispatchToProps = {
 
 export default compose(
   withStyles(styles),
-  withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(Home);

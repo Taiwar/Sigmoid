@@ -2,14 +2,12 @@ import React from 'react';
 
 import 'typeface-roboto';
 import { render } from 'react-dom';
-import { Router } from 'react-router-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import { App } from './views/layouts';
-import history from './state/history';
 import configureStore from './state/store';
 
 // eslint-disable-next-line no-undef
@@ -44,11 +42,9 @@ const theme = createMuiTheme({
 const RootHtml = () => (
   <ReduxProvider store={reduxStore}>
     <PersistGate loading={null} persistor={persistor}>
-      <Router history={history}>
-        <MuiThemeProvider theme={theme}>
-          <App/>
-        </MuiThemeProvider>
-      </Router>
+      <MuiThemeProvider theme={theme}>
+        <App/>
+      </MuiThemeProvider>
     </PersistGate>
   </ReduxProvider>
 );

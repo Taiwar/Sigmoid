@@ -1,2 +1,2 @@
 /* eslint-disable import/prefer-default-export */
-export { default as App } from './app';
+export { default as App } from './mainScreen';

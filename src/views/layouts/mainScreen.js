@@ -1,10 +1,9 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline/CssBaseline';
 import { withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import routes from '../../routes';
-import Footer from './footer';
+import Footer from '../components/footer';
+import Home from '../pages/home';
 
 const styles = {
   root: {
@@ -26,11 +25,7 @@ class App extends React.Component {
       <div className={classes.root}>
         <CssBaseline/>
         <main className={classes.content}>
-          {
-            routes.map(route => (
-              <Route key={route.path} {...route} />
-            ))
-          }
+          <Home />
         </main>
         <Footer/>
       </div>
