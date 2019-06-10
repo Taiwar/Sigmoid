@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core';
@@ -13,7 +13,7 @@ import Grid from '@material-ui/core/Grid/Grid';
 import { audioOperations } from '../../state/features/audio';
 import { discordOperations } from '../../state/features/discord';
 import {
-  NowPlaying, Playlist, Library, VolumeSlider
+  NowPlaying, Playlist, VolumeSlider
 } from '../components';
 import FolderView from '../components/folderView';
 
@@ -50,96 +50,77 @@ const styles = theme => ({
   }
 });
 
-class Home extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      howl: null,
-      playlist: [],
-      currentSong: null
-    };
-    this.handleOnPlaylistPlay = this.handleOnPlaylistPlay.bind(this);
-    this.handleOnLibraryPlay = this.handleOnLibraryPlay.bind(this);
-    this.handleToggle = this.handleToggle.bind(this);
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrev = this.handlePrev.bind(this);
-  }
+function Home(props) {
+  const [howl, setHowl] = useState(null);
+  const [playlist, setPlaylist] = useState([]);
+  const [currentSong, setCurrentSong] = useState(null);
 
-  componentDidMount() {
-    this.props.initRpc();
+  useEffect(() => {
+    props.initRpc();
 
     if (!globalShortcut.isRegistered('mediaplaypause')) {
-      globalShortcut.register('mediaplaypause', this.handleToggle);
+      globalShortcut.register('mediaplaypause', handleToggle);
     }
 
     if (!globalShortcut.isRegistered('medianexttrack')) {
-      globalShortcut.register('medianexttrack', this.handleNext);
+      globalShortcut.register('medianexttrack', handleNext);
     }
 
     if (!globalShortcut.isRegistered('mediaprevioustrack')) {
-      globalShortcut.register('mediaprevioustrack', this.handlePrev);
+      globalShortcut.register('mediaprevioustrack', handlePrev);
     }
 
-  }
+    return () => {
+      howl.stop();
+      props.rpc.destroy();
+      globalShortcut.unregister('mediaplaypause');
+      globalShortcut.unregister('medianexttrack');
+      globalShortcut.unregister('mediaprevioustrack');
+    };
+  }, []);
 
-  // eslint-disable-next-line no-unused-vars
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState.playlist !== this.state.playlist) {
-      const first = this.state.playlist.find(song => song.index === 1);
-      if (first && first !== this.state.currentSong) {
-        if (prevState.howl) prevState.howl.stop();
-        if (this.state.howl) this.state.howl.stop();
-        const sound = new Howl({
-          src: [first.path]
-        });
-        sound.on('end', this.handleNext);
-        Howler.volume(this.props.volume / 100);
+  useEffect(() => {
+    const first = playlist.find(song => song.index === 1);
+    if (first && first !== currentSong) {
+      if (howl) howl.stop();
+      const sound = new Howl({
+        src: [first.path]
+      });
+      sound.on('end', handleNext);
+      Howler.volume(props.volume / 100);
 
-        this.props.setPresence(this.props.rpc, {
-          details: first.name,
-          state: 'Listening',
-          largeImageKey: 'sigmoid_large',
-          largeImageText: 'Sigmoid',
-          startTimestamp: new Date()
-        });
+      props.setPresence(props.rpc, {
+        details: first.name,
+        state: 'Listening',
+        largeImageKey: 'sigmoid_large',
+        largeImageText: 'Sigmoid',
+        startTimestamp: new Date()
+      });
 
-        sound.play();
-        // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({
-          howl: sound,
-          currentSong: first
-        });
-      }
+      sound.play();
+      setHowl(sound);
+      setCurrentSong(first);
     }
-  }
+  }, [playlist]);
 
-  componentWillUnmount() {
-    this.state.howl.stop();
-    this.props.rpc.destroy();
-    globalShortcut.unregister('mediaplaypause');
-    globalShortcut.unregister('medianexttrack');
-    globalShortcut.unregister('mediaprevioustrack');
-  }
-
-  handleOnDrop(files, event) {
-    event.preventDefault();
+  function handleDrop(files, e) {
+    e.preventDefault();
     Object.keys(files)
       .forEach((key) => {
         if (files[key].type === 'audio/mp3') {
-          this.props.onAdd(files[key]);
+          props.onAdd(files[key]);
         }
       });
   }
 
-  // TODO: This is still very broken
-  handleOnPlaylistPlay(song) {
-    if (song !== this.state.currentSong) {
-      const playlist = [];
+  function handlePlaylistPlay(song) {
+    if (song !== currentSong) {
+      const newPlaylist = [];
       let i = 2;
-      this.state.playlist.forEach((s) => {
+      playlist.forEach((s) => {
         if (s === song) {
           s.index = 1;
-        } else if (s === this.state.currentSong) {
+        } else if (s === currentSong) {
           s.index = -1;
         } else if (s.index < 0) {
           s.index -= 1;
@@ -147,80 +128,73 @@ class Home extends React.Component {
           s.index = i;
           i += 1;
         }
-        playlist.push(s);
+        newPlaylist.push(s);
       });
-      this.setState({
-        playlist
-      });
+      setPlaylist(newPlaylist);
     }
   }
 
-  handleOnLibraryPlay(song) {
-    if (this.state.playlist.includes(song)) return;
-    const enqueued = this.state.playlist.filter(s => s.index > 0);
+  function handleLibraryPlay(song) {
+    if (playlist.includes(song)) return;
+    const enqueued = playlist.filter(s => s.index > 0);
     song.index = enqueued.length + 1;
-    this.setState({
-      playlist: [...this.state.playlist, song]
-    });
+    setPlaylist([...playlist, song]);
   }
 
-  handleToggle() {
-    if (this.state.howl.playing()) {
-      this.state.howl.pause();
+  function handleToggle() {
+    if (howl.playing()) {
+      howl.pause();
     } else {
-      this.state.howl.play();
+      howl.play();
     }
   }
 
-  handlePrev() {
-    return this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === -1));
+  function handleNext() {
+    return handlePlaylistPlay(playlist.find(song => song.index === 2));
   }
 
-  handleNext() {
-    return this.handleOnPlaylistPlay(this.state.playlist.find(song => song.index === 2));
+  function handlePrev() {
+    handlePlaylistPlay(playlist.find(song => song.index === -1));
   }
 
-  render() {
-    const {
-      volume, onStoreVolume, library, classes
-    } = this.props;
+  const {
+    volume, onStoreVolume, classes
+  } = props;
 
-    return (
-      <div className={classes.main}>
-        <NowPlaying
-          song={this.state.currentSong}
-          howl={this.state.howl}
-          onNext={this.handleNext}
-          onPrev={this.handlePrev}
-          onToggle={this.handleToggle}
-        />
-        <Grid container spacing={8}>
-          <Grid item xs={1}>
-            <VolumeSlider volume={volume} storeVolume={onStoreVolume}/>
-          </Grid>
-          <Grid item xs={7}>
-            <FolderView onPlay={this.handleOnLibraryPlay}/>
-          </Grid>
-          <Grid item xs={4}>
-            <Paper className={classes.playlist}>
-              <FileDrop onDrop={(files, event) => this.handleOnDrop(files, event)}>
-                <Typography component='h2'>Playlist</Typography>
-                <Playlist
-                  playlist={this.state.playlist}
-                  onPlay={this.handleOnPlaylistPlay}
-                />
-              </FileDrop>
-            </Paper>
-          </Grid>
+  return (
+    <div className={classes.main}>
+      <NowPlaying
+        song={currentSong}
+        howl={howl}
+        onNext={handleNext}
+        onPrev={handlePrev}
+        onToggle={handleToggle}
+      />
+      <Grid container spacing={8}>
+        <Grid item xs={1}>
+          <VolumeSlider volume={volume} storeVolume={onStoreVolume}/>
         </Grid>
-      </div>
-    );
-  }
+        <Grid item xs={7}>
+          <FolderView onPlay={handleLibraryPlay}/>
+        </Grid>
+        <Grid item xs={4}>
+          <Paper className={classes.playlist}>
+            <FileDrop onDrop={(files, event) => handleDrop(files, event)}>
+              <Typography component='h2'>Playlist</Typography>
+              <Playlist
+                playlist={playlist}
+                onPlay={handlePlaylistPlay}
+              />
+            </FileDrop>
+          </Paper>
+        </Grid>
+      </Grid>
+    </div>
+  );
 }
 
 Home.propTypes = {
   classes: PropTypes.object.isRequired,
-  library: PropTypes.array,
   volume: PropTypes.number,
   rpc: PropTypes.object,
   initRpc: PropTypes.func,

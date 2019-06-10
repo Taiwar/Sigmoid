@@ -14,7 +14,7 @@ import { createReducer } from '../../utils';
 */
 
 const directoryTreeReducer = createReducer({
-  root: __dirname,
+  root: './',
   treeSlice: []
 }, {
   [types.SET_DIRECTORY_ROOT]: (directoryTree, action) => ({...directoryTree, root: action.path}),
