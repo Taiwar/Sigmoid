@@ -112,12 +112,12 @@ class NowPlaying extends Component {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} justify="center">
+          <Grid item xs={12}>
             <div className={classes.progressContainer}>
               <Slider
                 value={this.state.completed}
                 onChange={this.handleSeekerChange}
-                onDragEnd={this.handleSeekerEnd}
+                onChangeCommitted={this.handleSeekerEnd}
               />
             </div>
           </Grid>

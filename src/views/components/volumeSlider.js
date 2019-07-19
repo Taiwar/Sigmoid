@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { Howler } from 'howler';
@@ -24,53 +24,48 @@ const styles = theme => ({
   }
 });
 
-class VolumeSlider extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isMuted: false
-    };
-    this.handleToggle = this.handleToggle.bind(this);
-    this.handleSeekerChange = this.handleSeekerChange.bind(this);
+function VolumeSlider(props) {
+  const { volume, classes } = props;
+  const [isMuted, setIsMuted] = useState(false);
+  const [localVolume, setLocalVolume] = useState(volume);
+
+  function handleToggle() {
+    Howler.mute(!isMuted);
+    setIsMuted(!isMuted);
   }
 
-  handleToggle() {
-    Howler.mute(!this.state.isMuted);
-    this.setState({
-      isMuted: !this.state.isMuted
-    });
+  function handleSeekerChange(e, val) {
+    const newVolume = val / 100;
+    setLocalVolume(newVolume);
+    Howler.volume(newVolume);
   }
 
-  handleSeekerChange(e, val) {
-    Howler.volume(val / 100);
-    this.props.storeVolume(val);
+  function handleSeekerEnd(e, val) {
+    props.storeVolume(val);
   }
 
-  render() {
-    const { volume, classes } = this.props;
-    return (
-      <div>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Paper className={classes.slider}>
-              <Slider
-                value={volume}
-                orientation="vertical"
-                onChange={this.handleSeekerChange}
-                onDragEnd={this.handleSeekerEnd}
-              />
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <Fab color="primary" aria-label="Add"
-                 onClick={this.handleToggle} href={''}>
-              {this.state.isMuted ? <MicOffIcon/> : <MicIcon/>}
-            </Fab>
-          </Grid>
+  return (
+    <div>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Paper className={classes.slider}>
+            <Slider
+              value={localVolume * 100}
+              orientation="vertical"
+              onChange={handleSeekerChange}
+              onChangeCommitted={handleSeekerEnd}
+            />
+          </Paper>
         </Grid>
-      </div>
-    );
-  }
+        <Grid item xs={12}>
+          <Fab color="primary" aria-label="Add"
+               onClick={handleToggle} href={''}>
+            {isMuted ? <MicOffIcon/> : <MicIcon/>}
+          </Fab>
+        </Grid>
+      </Grid>
+    </div>
+  );
 }
 
 VolumeSlider.propTypes = {
