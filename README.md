@@ -1,4 +1,6 @@
 # Sigmoid
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FTaiwar%2FSigmoid.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FTaiwar%2FSigmoid?ref=badge_shield)
+
 <img src="/public/icon.png?raw=true" alt="Sigmoid logo" width="200"/>
 
 ## Running Sigmoid
@@ -15,3 +17,7 @@ Use `yarn build` and then `yarn dist` to build a distributable version.
 
 * **Taiwar (Jonas)** - [Taiwar](https://github.com/Taiwar)
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FTaiwar%2FSigmoid.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FTaiwar%2FSigmoid?ref=badge_large)
