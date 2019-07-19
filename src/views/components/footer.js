@@ -14,14 +14,14 @@ const dialog = require('electron').remote.dialog;
 const styles = theme => ({
   footer: {
     backgroundColor: '#111111',
-    padding: theme.spacing.unit,
-    paddingLeft: theme.spacing.unit * 2
+    padding: theme.spacing(),
+    paddingLeft: theme.spacing(2)
   },
   margin: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing()
   },
   extendedIcon: {
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing(),
   },
   input: {
     color: '#eeeeee',

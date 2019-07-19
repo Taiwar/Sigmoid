@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper/Paper';
 import Typography from '@material-ui/core/Typography/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Slider from '@material-ui/lab/Slider';
+import Slider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid/Grid';
 import PlayIcon from '@material-ui/icons/PlayArrow';
 import PauseIcon from '@material-ui/icons/Pause';
@@ -15,11 +15,21 @@ import NextIcon from '@material-ui/icons/SkipNext';
 const styles = theme => ({
   paper: {
     marginTop: theme.spacing(2),
-    padding: theme.spacing(4),
   },
   controls: {
     padding: 0,
-    margin: 0
+    margin: theme.spacing(2) + 'px 0 0 0',
+  },
+  highlightBox: {
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
+    padding: theme.spacing(2),
+    backgroundColor: '#444',
+    color: '#eee'
+  },
+  progressContainer: {
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
   }
 });
 
@@ -81,18 +91,16 @@ class NowPlaying extends Component {
 
     return (
       <Paper className={classes.paper}>
+        <Typography className={classes.highlightBox} component="h6" variant="h6">{song.name}</Typography>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography component="h2">{song.name}</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container justify="center">
+            <Grid container justify="center" className={classes.controls}>
               <Grid item>
                 <IconButton onClick={onPrev} href={""}>
                   <PrevIcon/>
                 </IconButton>
               </Grid>
-              <Grid item className={classes.controls}>
+              <Grid item>
                 <IconButton onClick={onToggle} href={""}>
                   {this.state.isPlaying ? <PauseIcon/> : <PlayIcon/>}
                 </IconButton>
@@ -104,12 +112,14 @@ class NowPlaying extends Component {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <Slider
-              value={this.state.completed}
-              onChange={this.handleSeekerChange}
-              onDragEnd={this.handleSeekerEnd}
-            />
+          <Grid item xs={12} justify="center">
+            <div className={classes.progressContainer}>
+              <Slider
+                value={this.state.completed}
+                onChange={this.handleSeekerChange}
+                onDragEnd={this.handleSeekerEnd}
+              />
+            </div>
           </Grid>
         </Grid>
       </Paper>

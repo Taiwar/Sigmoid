@@ -4,10 +4,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import Paper from '@material-ui/core/Paper/Paper';
-import FileDrop from 'react-file-drop';
 import { Howl, Howler } from 'howler';
-import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
 import { audioOperations } from '../../state/features/audio';
 import { discordOperations } from '../../state/features/discord';
@@ -21,30 +18,20 @@ const styles = theme => ({
   main: {
     width: 'auto',
     display: 'block',
-    marginLeft: theme.spacing.unit * 4,
-    marginRight: theme.spacing.unit * 4,
+    marginLeft: theme.spacing(4),
+    marginRight: theme.spacing(4),
     flexDirection: 'row',
     overflow: 'hidden'
-  },
-  playlist: {
-    maxHeight: 500,
-    overflow: 'auto',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`
   },
   library: {
     maxHeight: 500,
     overflow: 'auto',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`
+    padding: theme.spacing(2)
   }
 });
 
@@ -100,16 +87,6 @@ function Home(props) {
       setCurrentSong(first);
     }
   }, [playlist]);
-
-  function handleDrop(files, e) {
-    e.preventDefault();
-    Object.keys(files)
-      .forEach((key) => {
-        if (files[key].type === 'audio/mp3') {
-          props.onAdd(files[key]);
-        }
-      });
-  }
 
   function handlePlaylistPlay(song) {
     if (song !== currentSong) {
@@ -176,15 +153,10 @@ function Home(props) {
           <FolderView onPlay={handleLibraryPlay}/>
         </Grid>
         <Grid item xs={4}>
-          <Paper className={classes.playlist}>
-            <FileDrop onDrop={(files, event) => handleDrop(files, event)}>
-              <Typography component='h2'>Playlist</Typography>
-              <Playlist
-                playlist={playlist}
-                onPlay={handlePlaylistPlay}
-              />
-            </FileDrop>
-          </Paper>
+          <Playlist
+            playlist={playlist}
+            onPlay={handlePlaylistPlay}
+          />
         </Grid>
       </Grid>
     </div>

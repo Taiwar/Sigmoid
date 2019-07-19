@@ -6,19 +6,18 @@ import { withStyles } from '@material-ui/core';
 import MicIcon from '@material-ui/icons/VolumeUp';
 import MicOffIcon from '@material-ui/icons/VolumeMute';
 import Paper from '@material-ui/core/Paper/Paper';
-import Slider from '@material-ui/lab/Slider';
+import Slider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
 
 const styles = theme => ({
   slider: {
     marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(1.2),
     height: 200,
-    width: 25,
+    width: 55,
     display: 'flex',
     flexDirection: 'col',
-    padding: `${theme.spacing.unit * 2}px`
+    padding: `${theme.spacing(2)}px`
   },
   button: {
     backgroundColor: '#fff'
@@ -56,7 +55,7 @@ class VolumeSlider extends Component {
             <Paper className={classes.slider}>
               <Slider
                 value={volume}
-                vertical
+                orientation="vertical"
                 onChange={this.handleSeekerChange}
                 onDragEnd={this.handleSeekerEnd}
               />

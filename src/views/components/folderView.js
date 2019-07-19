@@ -21,8 +21,18 @@ const styles = theme => ({
   },
   root: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2)
+    marginBottom: theme.spacing(2)
+  },
+  folderList: {
+    maxHeight: 800,
+    overflowY: "scroll"
+  },
+  highlightBox: {
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
+    padding: theme.spacing(),
+    backgroundColor: '#444',
+    color: '#eee'
   }
 });
 
@@ -59,10 +69,10 @@ function FolderView(props) {
   // TODO: RegEx only works for Windows
   return (
     <Paper className={classes.root}>
-      <Typography variant="h5" component="h3">
+      <Typography className={classes.highlightBox} variant="h6" component="h6">
         {directoryTree.root}
       </Typography>
-      <List component="ul">
+      <List component="ul" className={classes.folderList}>
         <ListItem className={classes.item} component="li" dense button onClick={() => {
           const newPath = path.join(directoryTree.root, '../');
           if (/([A-Z]:[/\\])(.*)/.exec(newPath)[2].length > 0) {
