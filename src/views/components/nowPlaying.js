@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withStyles } from '@material-ui/core';
@@ -33,98 +33,123 @@ const styles = theme => ({
   }
 });
 
-class NowPlaying extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isPlaying: true,
-      completed: 0,
-      interval: null
-    };
-    this.handleSeekerChange = this.handleSeekerChange.bind(this);
-    this.handleSeekerEnd = this.handleSeekerEnd.bind(this);
-  }
+function NowPlaying(props) {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [completed, setCompleted] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [intervalHandle, setIntervalHandle] = useState(null);
+  const {
+    howl, song, classes, onNext, onPrev, onToggle
+  } = props;
 
-  componentDidMount() {
+  useEffect(() => {
+    if (intervalHandle) {
+      clearInterval(intervalHandle);
+    }
     const interval = setInterval(() => {
-      if (this.props.howl != null && this.state.isPlaying) {
-        this.setState({
-          completed: (this.props.howl.seek() / this.props.howl.duration()) * 100
-        });
+      if (howl != null) {
+        if (duration !== howl.duration()) {
+          setDuration(howl.duration());
+        }
+        if (isPlaying) {
+          const songProgress = howl.seek();
+          setCompleted(songProgress);
+        }
       }
     }, 1000);
-    this.setState({
-      interval
-    });
+    setIntervalHandle(interval);
+    return () => clearInterval(intervalHandle);
+  }, [howl]);
+
+  if (song == null || howl == null) {
+    return (<div/>);
   }
 
-  componentWillUnmount() {
-    clearInterval(this.state.interval);
-  }
-
-  handleSeekerChange(e, val) {
+  function handleSeekerChange(e, val) {
+    if (intervalHandle) {
+      clearInterval(intervalHandle);
+      setIntervalHandle(null);
+    }
     // If steps are larger == Slider has been clicked on, not just slided so change immediately
     // TODO: See if this can be done more elegantly
-    if (Math.abs(val - this.state.completed) > 5) {
-      this.props.howl.seek((val / 100) * this.props.howl.duration());
+    if (Math.abs(val - completed) > 5) {
+      howl.seek(completed);
     }
-    this.setState({
-      completed: val
-    });
+    setCompleted(val);
   }
 
-  handleSeekerEnd() {
-    this.props.howl.seek((this.state.completed / 100) * this.props.howl.duration());
+  function handleSeekerEnd() {
+    howl.seek(completed);
+    if (intervalHandle) {
+      clearInterval(intervalHandle);
+    }
+    const interval = setInterval(() => {
+      if (howl != null) {
+        if (duration === 0) {
+          setDuration(howl.duration());
+        }
+        if (isPlaying) {
+          const songProgress = howl.seek();
+          setCompleted(songProgress);
+        }
+      }
+    }, 1000);
+    setIntervalHandle(interval);
   }
 
-  render() {
-    const {
-      howl, song, classes, onNext, onPrev, onToggle
-    } = this.props;
+  function seekerText(value) {
+    const mins = Math.floor(value / 60);
+    const secs =  Math.floor(value % 60);
+    return `${mins}:${secs > 9 ? secs : '0' + secs}`;
+  }
 
-    if (song == null || howl == null) {
-      return (<div/>);
-    }
+  howl.once('play', () => setIsPlaying(true));
+  howl.once('pause', () => setIsPlaying(false));
 
-    howl.once('play', () => this.setState({ isPlaying: true }));
-    howl.once('pause', () => this.setState({ isPlaying: false }));
-
-    return (
-      <Paper className={classes.paper}>
-        <Typography className={classes.highlightBox} component="h6" variant="h6">{song.name}</Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Grid container justify="center" className={classes.controls}>
-              <Grid item>
-                <IconButton onClick={onPrev} href={""}>
-                  <PrevIcon/>
-                </IconButton>
-              </Grid>
-              <Grid item>
-                <IconButton onClick={onToggle} href={""}>
-                  {this.state.isPlaying ? <PauseIcon/> : <PlayIcon/>}
-                </IconButton>
-              </Grid>
-              <Grid item>
-                <IconButton onClick={onNext} href={""}>
-                  <NextIcon/>
-                </IconButton>
-              </Grid>
+  return (
+    <Paper className={classes.paper}>
+      <Typography className={classes.highlightBox} component="h6" variant="h6">{song.name}</Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Grid container justify="center" className={classes.controls}>
+            <Grid item>
+              <IconButton onClick={onPrev} href={""}>
+                <PrevIcon/>
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton onClick={onToggle} href={""}>
+                {isPlaying ? <PauseIcon/> : <PlayIcon/>}
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton onClick={onNext} href={""}>
+                <NextIcon/>
+              </IconButton>
             </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <div className={classes.progressContainer}>
-              <Slider
-                value={this.state.completed}
-                onChange={this.handleSeekerChange}
-                onChangeCommitted={this.handleSeekerEnd}
-              />
-            </div>
-          </Grid>
         </Grid>
-      </Paper>
-    );
-  }
+        <Grid item xs={12}>
+          <div className={classes.progressContainer}>
+            <Slider
+              defaultValue={0}
+              getAriaValueText={seekerText}
+              valueLabelFormat={seekerText}
+              aria-labelledby="Time seeker slider"
+              valueLabelDisplay="auto"
+              step={1}
+              min={0}
+              marks={[{value: 0, label: seekerText(0)}, {value: duration, label: seekerText(duration)}]}
+              max={duration}
+              value={typeof completed === 'object' ? 0 : completed}
+              onChange={handleSeekerChange}
+              onChangeCommitted={handleSeekerEnd}
+            />
+          </div>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
 }
 
 NowPlaying.propTypes = {
