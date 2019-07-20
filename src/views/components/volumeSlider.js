@@ -41,7 +41,7 @@ function VolumeSlider(props) {
   }
 
   function handleSeekerEnd(e, val) {
-    props.storeVolume(val);
+    props.storeVolume(val / 100);
   }
 
   return (
@@ -50,8 +50,13 @@ function VolumeSlider(props) {
         <Grid item xs={12}>
           <Paper className={classes.slider}>
             <Slider
+              defaultValue={localVolume * 100}
               value={localVolume * 100}
+              aria-labelledby="Volume slider"
               orientation="vertical"
+              step={1}
+              valueLabelDisplay="auto"
+              valueLabelFormat={(value) => Math.floor(value) + '%'}
               onChange={handleSeekerChange}
               onChangeCommitted={handleSeekerEnd}
             />

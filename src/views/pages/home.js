@@ -72,7 +72,7 @@ function Home(props) {
         src: [first.path]
       });
       sound.on('end', handleNext);
-      Howler.volume(props.volume / 100);
+      Howler.volume(props.volume);
 
       props.setPresence(props.rpc, {
         details: first.name,
