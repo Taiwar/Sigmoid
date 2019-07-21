@@ -1,19 +1,17 @@
 import {
-  scanFolder,
   setLibrary,
   addSongToLibrary,
   removeSongFromLibrary,
   setVolume,
-  getTreeSlice,
+  getTree,
   setDirectoryRoot
 } from './actions';
 
 export {
-  scanFolder,
   setLibrary,
   addSongToLibrary,
   removeSongFromLibrary,
   setVolume,
-  getTreeSlice,
+  getTree,
   setDirectoryRoot
 };

@@ -1,17 +1,12 @@
 import * as types from './types';
 
-export const scanFolder = path => ({
-  type: types.SCAN_FOLDER,
-  path
-});
-
 export const setDirectoryRoot = path => ({
   type: types.SET_DIRECTORY_ROOT,
   path
 });
 
-export const getTreeSlice = path => ({
-  type: types.GET_TREE_SLICE,
+export const getTree = path => ({
+  type: types.GET_TREE,
   path
 });
 

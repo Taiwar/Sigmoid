@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
@@ -38,16 +38,25 @@ const styles = theme => ({
 
 
 function FolderView(props) {
-  const { classes, directoryTree, onPlay, getTreeSlice, setDirectoryRoot } = props;
+  const { classes, directoryTree, onPlay } = props;
+  const [currentPath, setCurrentPath] = useState({
+    root: directoryTree.root,
+    slice: directoryTree.tree,
+    parent: null
+  });
 
   useEffect(() => {
-    getTreeSlice(directoryTree.root);
-  }, [directoryTree.root]);
+    setCurrentPath({
+      root: directoryTree.root,
+      slice: directoryTree.tree,
+      parent: null
+    })
+  }, [directoryTree]);
 
   let listItems = null;
 
-  if (directoryTree.treeSlice && directoryTree.treeSlice.items !== undefined) {
-    const sorted = directoryTree.treeSlice.items.sort((a, b) => {
+  if (currentPath.slice && currentPath.slice.items !== undefined) {
+    const sorted = currentPath.slice.items.sort((a, b) => {
       if (a.type !== 'dir' && b.type === 'dir') return 1;
       if (a.type === 'dir' && b.type === 'dir') return 0;
       if (a.type === 'dir' && b.type !== 'dir') return -1;
@@ -56,7 +65,10 @@ function FolderView(props) {
     listItems = sorted.map(item => item.type === 'dir' ? (<DirItem
         key={item.path}
         dir={item}
-        onOpen={() => setDirectoryRoot(item.path)}
+        onOpen={() => setCurrentPath({
+          root: item.path,
+          slice: currentPath.slice.items.filter(i => i.path === item.path)[0]
+        })}
       />) : (
         <SongItem
           key={item.path}
@@ -70,19 +82,21 @@ function FolderView(props) {
   return (
     <Paper className={classes.root}>
       <Typography className={classes.highlightBox} variant="h6" component="h6">
-        {directoryTree.root}
+        {currentPath.root}
       </Typography>
       <List component="ul" className={classes.folderList}>
-        <ListItem className={classes.item} component="li" dense button onClick={() => {
-          const newPath = path.join(directoryTree.root, '../');
-          if (/([A-Z]:[/\\])(.*)/.exec(newPath)[2].length > 0) {
-            setDirectoryRoot(newPath);
-          }
-        }}>
-          <ListItemText
-            primary="../"
-          />
-        </ListItem>
+        {
+          currentPath.slice.parent ? <ListItem className={classes.item} component="li" dense button onClick={() => {
+            setCurrentPath({
+              root: currentPath.slice.parent.path,
+              slice: currentPath.slice.parent
+            });
+          }}>
+            <ListItemText
+              primary="../"
+            />
+          </ListItem> : null
+        }
         {listItems}
       </List>
     </Paper>
@@ -93,8 +107,6 @@ function FolderView(props) {
 FolderView.propTypes = {
   classes: PropTypes.object,
   directoryTree: PropTypes.object,
-  getTreeSlice: PropTypes.func,
-  setDirectoryRoot: PropTypes.func,
   onPlay: PropTypes.func.isRequired
 };
 
@@ -103,8 +115,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  setDirectoryRoot: audioOperations.setDirectoryRoot,
-  getTreeSlice: audioOperations.getTreeSlice
 };
 
 export default compose(

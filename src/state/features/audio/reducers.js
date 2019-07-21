@@ -6,7 +6,7 @@ import { createReducer } from '../../utils';
 {
     directoryTree: {
       root,
-      treeSlice
+      tree
     },
     library: [song],
     volume: float
@@ -15,10 +15,10 @@ import { createReducer } from '../../utils';
 
 const directoryTreeReducer = createReducer({
   root: './',
-  treeSlice: []
+  tree: {}
 }, {
   [types.SET_DIRECTORY_ROOT]: (directoryTree, action) => ({...directoryTree, root: action.path}),
-  [types.SET_DIRECTORY_TREE_SLICE]: (directoryTree, action) => ({...directoryTree, treeSlice: action.treeSlice})
+  [types.SET_DIRECTORY_TREE]: (directoryTree, action) => ({...directoryTree, tree: action.tree})
 });
 
 const libraryReducer = createReducer([], {

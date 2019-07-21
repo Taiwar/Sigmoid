@@ -36,20 +36,13 @@ const styles = theme => ({
 
 
 function Footer(props) {
-  const { classes } = props;
+  const { classes, directoryTree, setDirectoryRoot, getTree } = props;
 
   function handleOnRootDialogOpen() {
     dialog.showOpenDialog(null, { properties: ['openDirectory'] }, (dirname) => {
-      if (dirname) {
-        props.onSetRoot(dirname.toString());
-      }
-    });
-  }
-
-  function handleOnScanDialogOpen() {
-    dialog.showOpenDialog(null, { properties: ['openDirectory'] }, (dirname) => {
-      if (dirname) {
-        props.onScan(dirname.toString());
+      if (dirname && (directoryTree.root !== dirname.toString())) {
+        setDirectoryRoot(dirname.toString());
+        getTree(dirname.toString());
       }
     });
   }
@@ -60,25 +53,24 @@ function Footer(props) {
         <FolderIcon className={classes.extendedIcon} />
         Select Root
       </Fab>
-      <Fab size="small" variant="extended" color="primary" aria-label="Scan" className={classes.margin} onClick={handleOnScanDialogOpen} href={""}>
-        <RefreshIcon className={classes.extendedIcon} />
-        Scan
-      </Fab>
     </footer>
   );
 }
 
 Footer.propTypes = {
   classes: PropTypes.object.isRequired,
-  onScan: PropTypes.func,
-  onSetRoot: PropTypes.func
+  setDirectoryRoot: PropTypes.func,
+  directoryTree: PropTypes.object,
+  getTree: PropTypes.func,
 };
 
-const mapStateToProps = () => ({});
+const mapStateToProps = state => ({
+  directoryTree: state.audio.directoryTree
+});
 
 const mapDispatchToProps = {
-  onScan: audioOperations.scanFolder,
-  onSetRoot: audioOperations.setDirectoryRoot
+  setDirectoryRoot: audioOperations.setDirectoryRoot,
+  getTree: audioOperations.getTree
 };
 
 export default compose(
