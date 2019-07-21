@@ -45,17 +45,18 @@ function handleFiles(files, action, next) {
 }
 
 function handleTreeSlice(treeSlice, action, next) {
-  if (typeof treeSlice.items === 'string') {
-    treeSlice.items.map(async (item) => {
+  if (typeof treeSlice.items !== 'string') {
+    treeSlice.items = treeSlice.items.filter(item => {
       if (item.type !== undefined) {
         if (item.type === 'dir') {
-          return item;
+          return true;
         }
         const codec = item.type.split('/')[1];
         if (Howler.codecs(codec)) {
-          return item;
+          return true ;
         }
       }
+      return false;
     });
   }
   next({

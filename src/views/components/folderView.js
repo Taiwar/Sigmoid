@@ -46,7 +46,7 @@ function FolderView(props) {
 
   let listItems = null;
 
-  if (directoryTree.treeSlice.items !== undefined) {
+  if (directoryTree.treeSlice && directoryTree.treeSlice.items !== undefined) {
     const sorted = directoryTree.treeSlice.items.sort((a, b) => {
       if (a.type !== 'dir' && b.type === 'dir') return 1;
       if (a.type === 'dir' && b.type === 'dir') return 0;
