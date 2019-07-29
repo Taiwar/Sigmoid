@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes  from 'prop-types';
 import { compose } from 'recompose';
 import { withStyles } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem/ListItem';
@@ -16,36 +16,38 @@ const styles = {
   }
 };
 
-class PlaylistItem extends Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-  }
+function PlaylistItem(props) {
 
-  handleClick(e) {
+  function handleClick(e) {
     e.preventDefault();
-    this.props.onPlay(this.props.song);
+    props.onPlay(props.song);
   }
 
-  render() {
-    const { classes, song } = this.props;
+  const { classes, song, style } = props;
 
-    return (
-      <ListItem className={song.index > 0 ? classes.item : classes.played} dense button onClick={this.handleClick} component="li">
-        <Typography>{song.index}</Typography>
-        &nbsp;
-        <ListItemText
-          primary={song.name}
-        />
-      </ListItem>
-    );
-  }
+  return (
+    <ListItem
+      className={song.index > 0 ? classes.item : classes.played}
+      dense
+      button
+      onClick={handleClick}
+      component="li"
+      style={style}>
+      <Typography>{song.index}</Typography>
+      &nbsp;
+      <ListItemText
+        primaryTypographyProps={{noWrap: true}}
+        primary={song.name}
+      />
+    </ListItem>
+  );
 }
 
 PlaylistItem.propTypes = {
   song: PropTypes.object.isRequired,
   onPlay: PropTypes.func.isRequired,
-  classes: PropTypes.object
+  classes: PropTypes.object,
+  style: PropTypes.object
 };
 
 export default compose(

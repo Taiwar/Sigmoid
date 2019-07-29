@@ -23,7 +23,13 @@ function DirItem(props) {
   const { classes, dir, style } = props;
 
   return (
-    <ListItem className={classes.item} dense button onClick={handleClick} component="li" style={style}>
+    <ListItem
+      className={classes.item}
+      dense
+      button
+      onClick={handleClick}
+      component="li"
+      style={style}>
       <ListItemIcon>
         <FolderIcon />
       </ListItemIcon>

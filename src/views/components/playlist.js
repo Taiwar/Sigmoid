@@ -2,23 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withStyles } from '@material-ui/core';
-import List from '@material-ui/core/List/List';
 import PlaylistItem from './playlistItem';
 import Paper from '@material-ui/core/Paper';
-import FileDrop from 'react-file-drop';
 import Typography from '@material-ui/core/Typography';
+import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
+import { List as VirtualizedList } from 'react-virtualized';
 
 const styles = theme => ({
   playlistContainer: {
-    maxHeight: 500,
     marginTop: theme.spacing(2),
   },
   playlist: {
-    marginBottom: theme.spacing(),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    overflowY: 'scroll'
+    height: 'calc(100vh - 300px)',
+    overflow: 'hidden'
   },
   highlightBox: {
     borderTopLeftRadius: 3,
@@ -31,16 +27,6 @@ const styles = theme => ({
 
 function Playlist(props) {
 
-  function handleDrop(files, e) {
-    e.preventDefault();
-    Object.keys(files)
-      .forEach((key) => {
-        if (files[key].type === 'audio/mp3') {
-          props.onAdd(files[key]);
-        }
-      });
-  }
-
   const { onPlay, playlist, classes } = props;
   const sorted = playlist.sort((a, b) => {
     if (a.index < b.index) return -1;
@@ -48,22 +34,35 @@ function Playlist(props) {
     return 0;
   });
 
-  const items = sorted.map(song => (
-    <PlaylistItem
-      key={song.path}
+  function renderItem({index, key, style}) {
+    const song = sorted[index];
+    return <PlaylistItem
+      key={key}
       song={song}
       onPlay={onPlay}
-    />
-  ));
+      style={style}
+    />;
+  }
 
   return (
     <Paper className={classes.playlistContainer}>
-      <FileDrop onDrop={(files, event) => handleDrop(files, event)}>
-        <Typography className={classes.highlightBox} component="h6" variant="h6">Playlist</Typography>
-        <List className={classes.playlist} component="ul">
-          {items}
-        </List>
-      </FileDrop>
+      <Typography className={classes.highlightBox} component="h6" variant="h6">Playlist</Typography>
+      <div className={classes.playlist}>
+        <AutoSizer>
+          {
+            ({ width, height }) => {
+              return <VirtualizedList
+                width={width}
+                height={height}
+                rowHeight={50}
+                rowRenderer={renderItem}
+                rowCount={sorted.length}
+                overscanRowCount={3}
+                noRowsRenderer={() => <div style={{padding: 20}}>Waiting for something to play (◕‿◕｡)</div>}/>
+            }
+          }
+        </AutoSizer>
+      </div>
     </Paper>
   );
 }
