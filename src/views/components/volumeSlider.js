@@ -34,6 +34,19 @@ function VolumeSlider(props) {
     setIsMuted(!isMuted);
   }
 
+  function handleSeekerWheel(e) {
+    if (e.deltaY < 0) {
+      const increased = (localVolume * 100) + 2;
+      handleSeekerChange(null, increased > 100 ? 100 : increased);
+      props.storeVolume(localVolume);
+    } else {
+      const decreased = (localVolume) * 100 - 2;
+      handleSeekerChange(null, decreased < 0 ? 0 : decreased);
+      props.storeVolume(localVolume);
+    }
+    return false;
+  }
+
   function handleSeekerChange(e, val) {
     const newVolume = val / 100;
     setLocalVolume(newVolume);
@@ -48,7 +61,7 @@ function VolumeSlider(props) {
     <div>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Paper className={classes.slider}>
+          <Paper className={classes.slider} onWheel={handleSeekerWheel}>
             <Slider
               defaultValue={localVolume * 100}
               value={localVolume * 100}

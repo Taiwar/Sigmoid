@@ -10,8 +10,8 @@ const isDev = require('electron-is-dev');
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 900,
+    width: 1400,
+    height: 100,
     webPreferences: {
       webSecurity: !isDev,
       nodeIntegration: true
