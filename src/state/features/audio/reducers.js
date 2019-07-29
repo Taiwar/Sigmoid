@@ -4,21 +4,23 @@ import { createReducer } from '../../utils';
 
 /* State shape
 {
-    directoryTree: {
+    directoryInfo: {
       root,
-      tree
+      tree,
+      itemIndex
     },
     library: [song],
     volume: float
 }
 */
 
-const directoryTreeReducer = createReducer({
+const directoryInfo = createReducer({
   root: './',
-  tree: {}
+  tree: {},
+  itemIndex: []
 }, {
-  [types.SET_DIRECTORY_ROOT]: (directoryTree, action) => ({...directoryTree, root: action.path}),
-  [types.SET_DIRECTORY_TREE]: (directoryTree, action) => ({...directoryTree, tree: action.tree})
+  [types.SET_DIRECTORY_ROOT]: (directoryInfo, action) => ({...directoryInfo, root: action.path}),
+  [types.SET_DIRECTORY_INFO]: (directoryInfo, action) => ({...directoryInfo, tree: action.tree, itemIndex: action.itemIndex})
 });
 
 const libraryReducer = createReducer([], {
@@ -33,7 +35,7 @@ const volumeReducer = createReducer(50.0, {
 });
 
 export default combineReducers({
-  directoryTree: directoryTreeReducer,
+  directoryInfo: directoryInfo,
   library: libraryReducer,
   volume: volumeReducer
 });

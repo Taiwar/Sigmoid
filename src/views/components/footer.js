@@ -65,7 +65,7 @@ Footer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  directoryTree: state.audio.directoryTree
+  directoryTree: state.audio.directoryInfo.tree
 });
 
 const mapDispatchToProps = {

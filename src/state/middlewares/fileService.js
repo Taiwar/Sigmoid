@@ -14,7 +14,7 @@ const fileService = () => next => (action) => {
     }
 
     return getTreeSlice(action.path, null)
-      .then(tree => handleTree(tree, action, next))
+      .then(dirInfo => handleInfo(dirInfo, action, next))
       .catch(e => console.error(e)); // TODO: Proper error handling
   }
   return next(action);
@@ -22,15 +22,18 @@ const fileService = () => next => (action) => {
 
 export default fileService;
 
-function handleTree(tree, action, next) {
+function handleInfo(dirInfo, action, next) {
   next({
-    type: types.SET_DIRECTORY_TREE,
-    tree
+    type: types.SET_DIRECTORY_INFO,
+    tree: dirInfo.scannedDir,
+    itemIndex: dirInfo.itemIndex
   });
 }
 
 async function getTreeSlice(path, parent) {
+  let itemIndex = [];
   const dirStat = await stat(path);
+  // Format dir info into object
   const scannedDir = {
     name: path.match(/([^/]*)\/*$/)[1],
     path: path,
@@ -39,14 +42,38 @@ async function getTreeSlice(path, parent) {
     type: 'dir',
     lastModified: new Date(dirStat.mtime),
   };
+  // Push copy of dir into index
+  itemIndex.push({
+    name: path.match(/([^/]*)\/*$/)[1],
+    path: path,
+    size: dirStat.size,
+    type: 'dir',
+    lastModified: new Date(dirStat.mtime),
+  });
   const subDirs = await readdir(path);
   const items = await Promise.all(subDirs.map(async (subDir) => {
     const res = resolve(path, subDir);
     const dirStat = await stat(res);
     const isDir = await dirStat.isDirectory();
     if (isDir) {
-      return getTreeSlice(res, scannedDir);
+      // Recursive dir search
+      const itemDirObject = await getTreeSlice(res, scannedDir);
+      // Concat sub-index and current index
+      itemIndex = [...itemIndex, ...itemDirObject['itemIndex']];
+      // Add object to tree
+      return itemDirObject['scannedDir'];
     } else {
+      // Push copy of file into index
+      itemIndex.push({
+        name: subDir.split('.')
+          .slice(0, -1)
+          .join('.'),
+        path: res,
+        type: mimeTypes.contentType(res),
+        size: dirStat.size,
+        lastModified: new Date(dirStat.mtime)
+      });
+      // Add file to tree
       return {
         name: subDir.split('.')
           .slice(0, -1)
@@ -58,6 +85,7 @@ async function getTreeSlice(path, parent) {
       };
     }
   }));
+  // Filter all non-playable items
   scannedDir.items = items.filter(item => {
     if (item.type !== undefined && item.type) {
       if (item.type === 'dir') {
@@ -70,5 +98,5 @@ async function getTreeSlice(path, parent) {
     }
     return false;
   });
-  return scannedDir;
+  return { scannedDir, itemIndex };
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { withStyles } from '@material-ui/core';
@@ -13,37 +13,32 @@ const styles = {
   },
 };
 
-class DirItem extends Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-  }
+function DirItem(props) {
 
-  handleClick(e) {
+  function handleClick(e) {
     e.preventDefault();
-    this.props.onOpen(this.props.dir);
+    props.onOpen(props.dir);
   }
 
-  render() {
-    const { classes, dir } = this.props;
+  const { classes, dir, style } = props;
 
-    return (
-      <ListItem className={classes.item} dense button onClick={this.handleClick} component="li">
-        <ListItemIcon>
-          <FolderIcon />
-        </ListItemIcon>
-        <ListItemText
-          primary={dir.name}
-        />
-      </ListItem>
-    );
-  }
+  return (
+    <ListItem className={classes.item} dense button onClick={handleClick} component="li" style={style}>
+      <ListItemIcon>
+        <FolderIcon />
+      </ListItemIcon>
+      <ListItemText
+        primary={dir.name}
+      />
+    </ListItem>
+  );
 }
 
 DirItem.propTypes = {
   dir: PropTypes.object.isRequired,
   onOpen: PropTypes.func.isRequired,
-  classes: PropTypes.object
+  classes: PropTypes.object,
+  style: PropTypes.object.isRequired
 };
 
 export default compose(
