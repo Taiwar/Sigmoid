@@ -67,7 +67,7 @@ function FolderView(props) {
   const { directoryInfo, onPlay } = props;
   const [currentPath, setCurrentPath] = useState({
     root: directoryInfo.root,
-    slice: directoryInfo.tree,
+    branch: directoryInfo.tree,
     parent: null
   });
   const [searchTerm, setSearchTerm] = useState('');
@@ -76,14 +76,14 @@ function FolderView(props) {
   useEffect(() => {
     setCurrentPath({
       root: directoryInfo.root,
-      slice: directoryInfo.tree,
+      branch: directoryInfo.tree,
       parent: null
     })
   }, [directoryInfo]);
 
   let listItems = [];
 
-  if (currentPath.slice && currentPath.slice.items !== undefined) {
+  if (currentPath.branch && currentPath.branch.items !== undefined) {
     if (searchTerm && searchTerm !== '') {
       const sorted = directoryInfo.itemIndex.sort((a, b) => {
         if (a.type !== 'dir' && b.type === 'dir') return 1;
@@ -93,7 +93,7 @@ function FolderView(props) {
       });
       listItems = sorted.filter(item => item.name.toLocaleLowerCase().match(`.*${searchTerm.toLocaleLowerCase()}`));
     } else {
-      const sorted = currentPath.slice.items.sort((a, b) => {
+      const sorted = currentPath.branch.items.sort((a, b) => {
         if (a.type !== 'dir' && b.type === 'dir') return 1;
         if (a.type === 'dir' && b.type === 'dir') return 0;
         if (a.type === 'dir' && b.type !== 'dir') return -1;
@@ -111,7 +111,7 @@ function FolderView(props) {
       dir={item}
       onOpen={() => setCurrentPath({
         root: item.path,
-        slice: currentPath.slice.items.filter(i => i.path === item.path)[0]
+        branch: currentPath.branch.items.filter(i => i.path === item.path)[0]
       })}
     />) : (
       <SongItem
@@ -120,6 +120,19 @@ function FolderView(props) {
         song={item}
         onPlay={onPlay}
       />);
+  }
+
+  function handleGoToParent() {
+    // TODO: Only works for windows
+    const pathFolders = currentPath.root.split('\\');
+    const parentPath = pathFolders.slice(0, -1).join('\\');
+    const parentBranch = directoryInfo.itemIndex.filter(item => item.path === parentPath)[0];
+    if (parentBranch) {
+      setCurrentPath({
+        root: parentPath,
+        branch: parentBranch
+      });
+    }
   }
 
   return (
@@ -131,18 +144,15 @@ function FolderView(props) {
           </Typography>
         </Grid>
         {
-          currentPath.slice.parent ? <Grid item className={classes.fabItem}>
+          currentPath.root.split('\\').length > 1 ? <Grid item className={classes.fabItem}>
             <Fab
               size="small"
               color="primary"
               aria-label="Parent folder"
-              onClick={() => setCurrentPath({
-                root: currentPath.slice.parent.path,
-                slice: currentPath.slice.parent
-              })}
+              onClick={() => handleGoToParent()}
               href="">
-            <ParentIcon/>
-          </Fab>
+              <ParentIcon/>
+            </Fab>
           </Grid> : <div/>
         }
       </Grid>
