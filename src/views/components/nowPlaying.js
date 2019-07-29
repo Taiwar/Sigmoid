@@ -17,8 +17,10 @@ const styles = theme => ({
     marginTop: theme.spacing(2),
   },
   controls: {
-    padding: 0,
-    margin: theme.spacing(2) + 'px 0 0 0',
+    margin: theme.spacing(1, 0, 0, 0)
+  },
+  seeker: {
+    margin: theme.spacing(2, 0, 0, 0)
   },
   highlightBox: {
     borderTopLeftRadius: 3,
@@ -109,9 +111,9 @@ function NowPlaying(props) {
   return (
     <Paper className={classes.paper}>
       <Typography className={classes.highlightBox} component="h6" variant="h6">{song.name}</Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Grid container justify="center" className={classes.controls}>
+      <Grid container xs={12}>
+        <Grid item xs={2} className={classes.controls}>
+          <Grid container justify="center">
             <Grid item>
               <IconButton onClick={onPrev} href={""}>
                 <PrevIcon/>
@@ -129,7 +131,7 @@ function NowPlaying(props) {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={10} className={classes.seeker}>
           <div className={classes.progressContainer}>
             <Slider
               defaultValue={0}

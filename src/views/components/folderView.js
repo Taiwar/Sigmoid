@@ -26,7 +26,7 @@ const useStyles =  makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   folderList: {
-    height: 'calc(100vh - 210px)',
+    height: 'calc(100vh - 300px)',
     overflow: 'hidden'
   },
   highlightBox: {

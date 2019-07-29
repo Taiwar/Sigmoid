@@ -2,7 +2,6 @@ import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline/CssBaseline';
 import { withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import Footer from '../components/footer';
 import Home from '../pages/home';
 
 const styles = {
@@ -27,7 +26,6 @@ class App extends React.Component {
         <main className={classes.content}>
           <Home />
         </main>
-        <Footer/>
       </div>
     );
   }

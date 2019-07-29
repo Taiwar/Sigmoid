@@ -9,6 +9,11 @@ import Paper from '@material-ui/core/Paper/Paper';
 import Slider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
+import * as audioOperations from '../../state/features/audio/operations';
+import connect from 'react-redux/es/connect/connect';
+import FolderIcon from '@material-ui/icons/Folder';
+
+const dialog = require('electron').remote.dialog;
 
 const styles = theme => ({
   slider: {
@@ -25,7 +30,7 @@ const styles = theme => ({
 });
 
 function VolumeSlider(props) {
-  const { volume, classes } = props;
+  const { volume, classes, directoryTree, setDirectoryRoot, getTree } = props;
   const [isMuted, setIsMuted] = useState(false);
   const [localVolume, setLocalVolume] = useState(volume);
 
@@ -57,6 +62,15 @@ function VolumeSlider(props) {
     props.storeVolume(val / 100);
   }
 
+  function handleOnRootDialogOpen() {
+    dialog.showOpenDialog(null, { properties: ['openDirectory'] }, (dirname) => {
+      if (dirname && (directoryTree.root !== dirname.toString())) {
+        setDirectoryRoot(dirname.toString());
+        getTree(dirname.toString());
+      }
+    });
+  }
+
   return (
     <div>
       <Grid container spacing={2}>
@@ -76,9 +90,13 @@ function VolumeSlider(props) {
           </Paper>
         </Grid>
         <Grid item xs={12}>
-          <Fab color="primary" aria-label="Add"
-               onClick={handleToggle} href={''}>
+          <Fab color="primary" aria-label="Add" onClick={handleToggle} href=''>
             {isMuted ? <MicOffIcon/> : <MicIcon/>}
+          </Fab>
+        </Grid>
+        <Grid item xs={12}>
+          <Fab color="primary" aria-label="Scan" onClick={handleOnRootDialogOpen} href="">
+            <FolderIcon />
           </Fab>
         </Grid>
       </Grid>
@@ -89,9 +107,22 @@ function VolumeSlider(props) {
 VolumeSlider.propTypes = {
   classes: PropTypes.object,
   storeVolume: PropTypes.func,
-  volume: PropTypes.number
+  volume: PropTypes.number,
+  directoryTree: PropTypes.object,
+  setDirectoryRoot: PropTypes.func,
+  getTree: PropTypes.func
+};
+
+const mapStateToProps = state => ({
+  directoryTree: state.audio.directoryInfo.tree
+});
+
+const mapDispatchToProps = {
+  setDirectoryRoot: audioOperations.setDirectoryRoot,
+  getTree: audioOperations.getTree
 };
 
 export default compose(
-  withStyles(styles)
+  withStyles(styles),
+  connect(mapStateToProps, mapDispatchToProps)
 )(VolumeSlider);
