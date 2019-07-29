@@ -44,20 +44,20 @@ const useStyles =  makeStyles(theme => ({
     width: '100%',
   },
   searchIcon: {
-    width: theme.spacing(7),
     height: '100%',
-    position: 'absolute',
     pointerEvents: 'none',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#555',
   },
   inputRoot: {
     color: 'inherit',
+    width: '100%'
   },
   inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    width: '100%',
+    padding: theme.spacing(1),
+    backgroundColor: '#555'
   },
 }));
 
@@ -156,21 +156,25 @@ function FolderView(props) {
           </Grid> : <div/>
         }
       </Grid>
-      <div className={classes.search}>
-        <div className={classes.searchIcon}>
-          <SearchIcon />
-        </div>
-        <InputBase
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          placeholder="Global search…"
-          classes={{
-            root: classes.inputRoot,
-            input: classes.inputInput,
-          }}
-          inputProps={{ 'aria-label': 'search' }}
-        />
-      </div>
+      <Grid container className={classes.search}>
+        <Grid item xs={1}>
+          <div className={classes.searchIcon}>
+            <SearchIcon />
+          </div>
+        </Grid>
+        <Grid item xs={11}>
+          <InputBase
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="Global search…"
+            classes={{
+              root: classes.inputRoot,
+              input: classes.inputInput,
+            }}
+            inputProps={{ 'aria-label': 'search' }}
+          />
+        </Grid>
+      </Grid>
       <div className={classes.folderList}>
         <AutoSizer>
           {
