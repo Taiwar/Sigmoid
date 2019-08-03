@@ -12,7 +12,9 @@ import {
   NowPlaying, Playlist, VolumeSlider, FolderView
 } from '../components';
 
+const { ipcRenderer } = window.require('electron');
 const { globalShortcut, process } = window.require('electron').remote;
+const mimeTypes = window.require('mime-types');
 
 const styles = theme => ({
   main: {
@@ -43,7 +45,14 @@ function Home(props) {
   useEffect(() => {
     props.initRpc();
 
-    console.log("process args", process.argv);
+    // o-> Handle "open with" dialogs when window already open
+    ipcRenderer.on('processArgs', (event, message) => {
+      if (message.length > 3) {
+        handleProcessArgFile(message[3]);
+      }
+    });
+
+    // Register media keys
 
     if (!globalShortcut.isRegistered('mediaplaypause')) {
       globalShortcut.register('mediaplaypause', handleToggle);
@@ -56,6 +65,8 @@ function Home(props) {
     if (!globalShortcut.isRegistered('mediaprevioustrack')) {
       globalShortcut.register('mediaprevioustrack', handlePrev);
     }
+
+    // Cleanup
 
     return () => {
       howl.stop();
@@ -134,9 +145,30 @@ function Home(props) {
     handlePlaylistPlay(playlist.find(song => song.index === -1));
   }
 
+  function handleProcessArgFile(potentialMediaFilePath) {
+    if (playlist.filter(s => s.path === potentialMediaFilePath).length === 0) {
+      // TODO: Split only works for Windows
+      const song = {
+        name: potentialMediaFilePath.split('\\')
+          .slice(-1)[0]
+          .split('.')
+          .slice(0, -1),
+        path: potentialMediaFilePath,
+        type: mimeTypes.contentType(potentialMediaFilePath),
+        size: -1,
+        lastModified: new Date()
+      };
+      handleLibraryPlay(song);
+    }
+  }
+
   const {
     volume, onStoreVolume, classes
   } = props;
+
+  if (process.argv.length > 1) {
+    handleProcessArgFile(process.argv[1]);
+  }
 
   return (
     <div className={classes.main}>
@@ -171,7 +203,6 @@ Home.propTypes = {
   rpc: PropTypes.object,
   initRpc: PropTypes.func,
   setPresence: PropTypes.func,
-  onAdd: PropTypes.func,
   onStoreVolume: PropTypes.func
 };
 
