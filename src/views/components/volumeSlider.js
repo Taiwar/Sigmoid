@@ -13,7 +13,7 @@ import * as audioOperations from '../../state/features/audio/operations';
 import connect from 'react-redux/es/connect/connect';
 import FolderIcon from '@material-ui/icons/Folder';
 
-const dialog = require('electron').remote.dialog;
+const dialog = window.require('electron').remote.dialog;
 
 const styles = theme => ({
   slider: {

@@ -12,7 +12,7 @@ import {
   NowPlaying, Playlist, VolumeSlider, FolderView
 } from '../components';
 
-const { globalShortcut } = require('electron').remote;
+const { globalShortcut, process } = window.require('electron').remote;
 
 const styles = theme => ({
   main: {
@@ -42,6 +42,8 @@ function Home(props) {
 
   useEffect(() => {
     props.initRpc();
+
+    console.log("process args", process.argv);
 
     if (!globalShortcut.isRegistered('mediaplaypause')) {
       globalShortcut.register('mediaplaypause', handleToggle);

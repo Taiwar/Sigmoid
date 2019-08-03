@@ -1,11 +1,11 @@
 import { Howler } from 'howler';
 import * as types from '../features/audio/types';
 // eslint-disable-next-line no-undef
-const { resolve } = require('path');
+const { resolve } = window.require('path');
 // eslint-disable-next-line no-undef
-const { readdir, stat } = require('fs').promises;
+const { readdir, stat } = window.require('fs').promises;
 // eslint-disable-next-line no-undef
-const mimeTypes = require('mime-types');
+const mimeTypes = window.require('mime-types');
 
 const fileService = () => next => (action) => {
   if (action.type === types.GET_TREE) {
