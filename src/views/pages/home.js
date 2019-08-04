@@ -146,7 +146,7 @@ function Home(props) {
   }
 
   function handleProcessArgFile(potentialMediaFilePath) {
-    if (playlist.filter(s => s.path === potentialMediaFilePath).length === 0) {
+    if (potentialMediaFilePath.length > 1 && playlist.filter(s => s.path === potentialMediaFilePath).length === 0) {
       // TODO: Split only works for Windows
       const song = {
         name: potentialMediaFilePath.split('\\')

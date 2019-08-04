@@ -108,10 +108,14 @@ function NowPlaying(props) {
   howl.once('play', () => setIsPlaying(true));
   howl.once('pause', () => setIsPlaying(false));
 
+  // The first mark is a workaround to a weird issue concerning a "ghost" 0:00 marker that conflicts
+  // with a custom 0:00 one
+  const songMarks = [{value: 0.0000000001, label: seekerText(0)}, {value: duration, label: seekerText(duration)}];
+
   return (
     <Paper className={classes.paper}>
       <Typography className={classes.highlightBox} component="h6" variant="h6">{song.name}</Typography>
-      <Grid container xs={12}>
+      <Grid container>
         <Grid item xs={2} className={classes.controls}>
           <Grid container justify="center">
             <Grid item>
@@ -141,7 +145,7 @@ function NowPlaying(props) {
               valueLabelDisplay="auto"
               step={1}
               min={0}
-              marks={[{value: 0, label: seekerText(0)}, {value: duration, label: seekerText(duration)}]}
+              marks={songMarks}
               max={duration}
               value={typeof completed === 'object' ? 0 : completed}
               onChange={handleSeekerChange}
