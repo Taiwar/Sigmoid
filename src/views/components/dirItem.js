@@ -4,8 +4,10 @@ import { compose } from 'recompose';
 import { withStyles } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem/ListItem';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
-import FolderIcon from '@material-ui/icons/Folder';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ShuffleIcon from '@material-ui/icons/Shuffle';
+import FolderIcon from '@material-ui/icons/Folder';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = {
   item: {
@@ -15,12 +17,17 @@ const styles = {
 
 function DirItem(props) {
 
+  const { classes, dir, onOpen, onShuffle, style } = props;
+
   function handleClick(e) {
     e.preventDefault();
-    props.onOpen(props.dir);
+    onOpen(dir);
   }
 
-  const { classes, dir, style } = props;
+  function handleShuffle(e) {
+    e.preventDefault();
+    onShuffle(dir);
+  }
 
   return (
     <ListItem
@@ -36,6 +43,9 @@ function DirItem(props) {
       <ListItemText
         primary={dir.name}
       />
+      <IconButton onClick={handleShuffle} aria-label="shuffle">
+        <ShuffleIcon />
+      </IconButton>
     </ListItem>
   );
 }
@@ -43,6 +53,7 @@ function DirItem(props) {
 DirItem.propTypes = {
   dir: PropTypes.object.isRequired,
   onOpen: PropTypes.func.isRequired,
+  onShuffle: PropTypes.func.isRequired,
   classes: PropTypes.object,
   style: PropTypes.object.isRequired
 };

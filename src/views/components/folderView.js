@@ -64,7 +64,7 @@ const useStyles =  makeStyles(theme => ({
 
 function FolderView(props) {
   const classes = useStyles();
-  const { directoryInfo, onPlay } = props;
+  const { directoryInfo, onPlay, onShuffle } = props;
   const [currentPath, setCurrentPath] = useState({
     root: directoryInfo.root,
     branch: directoryInfo.tree,
@@ -113,6 +113,7 @@ function FolderView(props) {
         root: item.path,
         branch: currentPath.branch.items.filter(i => i.path === item.path)[0]
       })}
+      onShuffle={onShuffle}
     />) : (
       <SongItem
         style={style}
@@ -198,7 +199,8 @@ function FolderView(props) {
 
 FolderView.propTypes = {
   directoryInfo: PropTypes.object,
-  onPlay: PropTypes.func.isRequired
+  onPlay: PropTypes.func.isRequired,
+  onShuffle: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

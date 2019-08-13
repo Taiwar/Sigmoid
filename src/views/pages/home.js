@@ -259,6 +259,32 @@ function Home(props) {
     }
   }
 
+  function recTree(item, list) {
+    if (item.type !== 'dir') {
+      list.push(item);
+    } else {
+      const added = item.items.map(i => recTree(i, list));
+      list.concat(added);
+    }
+    return list;
+  }
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function handleShuffle(dir) {
+    setPlayHistory([]);
+    // TODO: This is horribly inefficient and shouldn't have to be done after the initial library dir crawl
+    const list = recTree(dir, []);
+    shuffle(list);
+    setPlaylist(list);
+  }
+
   const {
     volume, onStoreVolume, classes
   } = props;
@@ -281,7 +307,7 @@ function Home(props) {
           <VolumeSlider volume={volume} storeVolume={onStoreVolume}/>
         </Grid>
         <Grid item xs={7}>
-          <FolderView onPlay={handleLibraryPlay}/>
+          <FolderView onPlay={handleLibraryPlay} onShuffle={handleShuffle}/>
         </Grid>
         <Grid item xs={4}>
           <Playlist
