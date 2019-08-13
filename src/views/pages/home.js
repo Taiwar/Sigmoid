@@ -40,6 +40,7 @@ const styles = theme => ({
 function Home(props) {
   const [howl, setHowl] = useState(null);
   const [playlist, setPlaylist] = useState([]);
+  const [playHistory, setPlayHistory] = useState([]);
   const [currentSong, setCurrentSong] = useState(null);
 
   useEffect(() => {
@@ -78,7 +79,7 @@ function Home(props) {
   }, []);
 
   useEffect(() => {
-    const first = playlist.find(song => song.index === 1);
+    const first = playlist[0];
     if (first && first !== currentSong) {
       if (howl) howl.stop();
       const sound = new Howl({
@@ -102,30 +103,62 @@ function Home(props) {
   }, [playlist]);
 
   function handlePlaylistPlay(song) {
+    // Is song already playing?
     if (song !== currentSong) {
-      const newPlaylist = [];
-      let i = 2;
-      playlist.forEach((s) => {
-        if (s === song) {
-          s.index = 1;
-        } else if (s === currentSong) {
-          s.index = -1;
-        } else if (s.index < 0) {
-          s.index -= 1;
+      let index = playlist.indexOf(song);
+      let newHistory;
+      let newPlaylist;
+      if (index === -1) {
+        // Song is in history
+        index = playHistory.indexOf(song);
+        if (index === 0) {
+          // Song is first history item
+          // Copy history
+          newHistory = [...playHistory];
+          // Remove first item from new history
+          newHistory.splice(0, 1);
+          // Add first item to playlist (copy because immutable state)
+          newPlaylist = [playHistory[0], ...playlist];
+        } else if (index === playHistory.length - 1) {
+          // Song is last history item
+          // New history is empty
+          newHistory = [];
+          // Add all history songs to playlist (copy), accounting for reverse order
+          newPlaylist = [...playHistory.reverse(), ...playlist];
         } else {
-          s.index = i;
-          i += 1;
+          // Song is any other history item
+          // New history is every item before song (copy)
+          newHistory = [...playHistory].slice(index + 1);
+          // Add song and all items after it to playlist (copy), accounting for reverse order
+          newPlaylist = [...[...playHistory].slice(0, index + 1).reverse(), ...playlist]
         }
-        newPlaylist.push(s);
-      });
+      } else {
+        // Song is in playlist
+        if (index === 0) {
+          // Song already playing
+          return;
+        } else if (index === playlist.length - 1) {
+          // Song is last of playlist
+          // History is every other song in playlist plus previous history (copy), accounting for reverse order
+          newHistory = [...playlist.slice(0, playlist.length - 1).reverse(), ...playHistory];
+          // Playlist is last song
+          newPlaylist = [playlist[playlist.length - 1]];
+        } else {
+          // Song is any other item in playlist
+          // New history is every song before item (copy), accounting for reverse order
+          newHistory = [...[...playlist].slice(0, index).reverse(), ...playHistory];
+          // New playlist is song and everything after it (copy)
+          newPlaylist = [...playlist].slice(index);
+        }
+      }
+      // Update state
       setPlaylist(newPlaylist);
+      setPlayHistory(newHistory);
     }
   }
 
   function handleLibraryPlay(song) {
     if (playlist.includes(song)) return;
-    const enqueued = playlist.filter(s => s.index > 0);
-    song.index = enqueued.length + 1;
     setPlaylist([...playlist, song]);
   }
 
@@ -138,11 +171,75 @@ function Home(props) {
   }
 
   function handleNext() {
-    return handlePlaylistPlay(playlist.find(song => song.index === 2));
+    if (playlist.length > 1) {
+      return handlePlaylistPlay(playlist[1]);
+    }
   }
 
   function handlePrev() {
-    handlePlaylistPlay(playlist.find(song => song.index === -1));
+    if (playHistory.length > 0) {
+      handlePlaylistPlay(playHistory[0]);
+    }
+  }
+
+  function handlePlaylistRepositioning(oldIndex, newIndex) {
+    // If-clauses handle move between history and playlist
+    if (oldIndex < 0) {
+      const newHistory = [...playHistory];
+      if (newIndex < 0) {
+        // Move is from history to history
+        // TODO: Why is this broken?
+        const adjustedNew = (newIndex+1) === 0 ? (newIndex+1) : (newIndex+1)*(-1);
+        const adjustedOld = (oldIndex+1) === 0 ? (oldIndex+1) : (oldIndex+1)*(-1);
+        let tmp = newHistory[adjustedNew];
+        newHistory[adjustedNew] = newHistory[adjustedOld];
+        newHistory[adjustedOld] = tmp;
+        setPlayHistory(newHistory);
+      } else {
+        // Move is from history to playlist
+        const newPlaylist = [...playlist];
+        const endIndex = (oldIndex+1) === 0 ? (oldIndex+1) : (oldIndex+1)*(-1);
+        newPlaylist.splice(newIndex, 0, playHistory[endIndex]);
+        newHistory.splice(endIndex, 1);
+        setPlaylist(newPlaylist);
+        setPlayHistory(newHistory);
+      }
+    } else {
+      const newPlaylist = [...playlist];
+      if (newIndex < 0) {
+        // Move is from playlist to history
+        const newHistory = [...playHistory];
+        const startIndex = (newIndex+1) === 0 ? (newIndex+1) : (newIndex+1)*(-1);
+        newHistory.splice(startIndex, 0, playHistory[oldIndex]);
+        newPlaylist.splice(oldIndex, 1);
+        setPlaylist(newPlaylist);
+        setPlayHistory(newHistory);
+      } else {
+        // Move is from playlist to playlist
+        newPlaylist.splice(newIndex, 0, newPlaylist.splice(oldIndex, 1)[0]);
+        setPlaylist(newPlaylist);
+      }
+    }
+  }
+
+  function handleDelete(song) {
+    let index = playlist.indexOf(song);
+    if (index === -1) {
+      // Song is in history
+      index = playHistory.indexOf(song);
+      const newHistory = [...playHistory];
+      newHistory.splice(index, 1);
+      setPlayHistory(newHistory);
+    } else {
+      const newPlaylist = [...playlist];
+      newPlaylist.splice(index, 1);
+      setPlaylist(newPlaylist);
+    }
+  }
+
+  function handleClear() {
+    setPlaylist([]);
+    setPlayHistory([]);
   }
 
   function handleProcessArgFile(potentialMediaFilePath) {
@@ -189,7 +286,11 @@ function Home(props) {
         <Grid item xs={4}>
           <Playlist
             playlist={playlist}
+            playHistory={playHistory}
             onPlay={handlePlaylistPlay}
+            onChange={handlePlaylistRepositioning}
+            onClear={handleClear}
+            onDelete={handleDelete}
           />
         </Grid>
       </Grid>
