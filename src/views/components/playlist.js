@@ -15,7 +15,7 @@ const styles = theme => ({
   },
   playlist: {
     height: 'calc(100vh - 300px)',
-    overflow: 'hidden'
+    overflow: 'auto'
   },
   highlightBox: {
     borderTopLeftRadius: 3,
@@ -83,10 +83,8 @@ function Playlist(props) {
         </Grid>
       </Grid>
       <div className={classes.playlist}>
-        <div className={classes.playlist}>
-          {historyItems}
-          {playlistItems}
-        </div>
+        {historyItems}
+        {playlistItems}
       </div>
     </Paper>
   );
