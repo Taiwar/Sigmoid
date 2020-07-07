@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "concurrently": "^4.1.1",
-    "electron": "^6.0.0",
+    "electron": "^9.1.0",
     "electron-builder": "^21.2.0",
     "eslint": "6.1.0",
     "eslint-plugin-react": "^7.14.3",
